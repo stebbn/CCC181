@@ -1,8 +1,8 @@
 # Git Exercises
 
 **Course:** CCC181  
-**Student Name:** <Last Name>, <First Name>  
-**Student ID:** <ID Number Without Hyphen>  
+**Student Name:** Llamedo, Steve Nash  
+**Student ID:** 20241070 
 
 ## Activity Description
 
@@ -16,9 +16,29 @@ My Git configuration uses my student ID number without the hyphen, as instructed
 
 | Exercise No. | Exercise Title | Screenshot File |
 |---|---|---|
-| 01 | <Exercise Title> | `<lastname>_<firstname>_01.png` |
-| 02 | <Exercise Title> | `<lastname>_<firstname>_02.png` |
-| 03 | <Exercise Title> | `<lastname>_<firstname>_03.png` |
+| 01 | master | ![](pictures/llamedo_stevenash_1.png) |
+| 02 | commit-one-file | ![](pictures/llamedo_stevenash_2.png) |
+| 03 | commit-one-file-staged | ![](pictures/llamedo_stevenash_3.png) |
+| 04 | ignore-them | ![](pictures/llamedo_stevenash_4.png) |
+| 05 | chase-branch | ![](pictures/llamedo_stevenash_5.png) |
+| 06 | merge-conflict | ![](pictures/llamedo_stevenash_6.png) |
+| 07 | save-your-work | ![](pictures/llamedo_stevenash_7.png) |
+| 08 | change-branch-history | ![](pictures/llamedo_stevenash_8.png) |
+| 09 | remove-ignored | ![](pictures/llamedo_stevenash_9.png) |
+| 10 | case-sensitive-filename | ![](pictures/llamedo_stevenash_10.png) |
+| 11 | fix-typo | ![](pictures/llamedo_stevenash_11.png) |
+| 12 | forge-date | ![](pictures/llamedo_stevenash_12.png) |
+| 13 | fix-old-typo | ![](pictures/llamedo_stevenash_13.png) |
+| 14 | commit-lost | ![](pictures/llamedo_stevenash_14.png) |
+| 15 | split-commit | ![](pictures/llamedo_stevenash_15.png) |
+| 16 | too-many-commits | ![](pictures/llamedo_stevenash_16.png) |
+| 17 | executable | ![](pictures/llamedo_stevenash_17.png) |
+| 18 | commit-parts | ![](pictures/llamedo_stevenash_18.png) |
+| 19 | pick-your-features | ![](pictures/llamedo_stevenash_19.png) |
+| 20 | rebase-complex | ![](pictures/llamedo_stevenash_20.png) |
+| 21 | invalid-order | ![](pictures/llamedo_stevenash_21.png) |
+| 22 | find-swearwords | ![](pictures/llamedo_stevenash_22.png) |
+| 23 | find-bug | ![](pictures/llamedo_stevenash_23.png) |
 
 
 > Add, remove, or update rows based on the exercises you completed.
@@ -28,9 +48,10 @@ My Git configuration uses my student ID number without the hyphen, as instructed
 ```text
 activities/git-exercises/
 ├── README.md
-├── <lastname>_<firstname>_01.png
-├── <lastname>_<firstname>_02.png
-└── <lastname>_<firstname>_03.png
+├── pictures
+    ├── <lastname>_<firstname>_01.png
+    ├── <lastname>_<firstname>_02.png
+    └── <lastname>_<firstname>_03.png
 ```
 
 ## Declaration
