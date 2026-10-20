@@ -99,9 +99,9 @@ Everything you build this week is the base for the rest of the semester. In Week
 
 **Checkpoint 0**
 
-- [ ] The app runs with `flask --app app run --debug` and shows your system's name, not ClinicQ.
-- [ ] `SERVICES` holds your real services, and tickets have a `status`.
-- [ ] You committed: `git commit -m "Set up <YourApp> from the Week 2 starter (#<issue>)"`
+- [X] The app runs with `flask --app app run --debug` and shows your system's name, not ClinicQ.
+- [X] `SERVICES` holds your real services, and tickets have a `status`.
+- [X] You committed: `git commit -m "Set up <YourApp> from the Week 2 starter (#<issue>)"`
 
 ---
 
