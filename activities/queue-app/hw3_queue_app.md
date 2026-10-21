@@ -193,10 +193,10 @@ Save the files as `docs/week3/wireframes/` (PNG, JPG or PDF), for example `join-
 
 **Checkpoint 2**
 
-- [ ] Six frames: three screens, each at phone and laptop width.
-- [ ] Every frame names the persona, the device, and the requirement IDs.
-- [ ] The main flow for each persona is marked with arrows.
-- [ ] Committed in `docs/week3/wireframes/`.
+- [X] Six frames: three screens, each at phone and laptop width.
+- [X] Every frame names the persona, the device, and the requirement IDs.
+- [X] The main flow for each persona is marked with arrows.
+- [X] Committed in `docs/week3/wireframes/`.
 
 ---
 
@@ -223,9 +223,9 @@ Update your wireframes with the changes before you start Part 4.
 
 **Checkpoint 3**
 
-- [ ] `docs/week3/feedback.md` has a review of all three screens in the *Works well / Problem / Change* format.
-- [ ] Your wireframes are updated, or `feedback.md` explains why you kept them.
-- [ ] Committed.
+- [X] `docs/week3/feedback.md` has a review of all three screens in the *Works well / Problem / Change* format.
+- [X] Your wireframes are updated, or `feedback.md` explains why you kept them.
+- [X] Committed.
 
 ---
 
