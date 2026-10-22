@@ -2,6 +2,8 @@ from queue_types import *
 from flask import Flask, abort, redirect, render_template, request, url_for
 
 app = Flask(__name__)
+app.secret_key = "dev-only-change-me"
+
 
 SERVICES: list[ServiceDict] = [
     {"id": 1, "name": "To Check"},
@@ -9,12 +11,12 @@ SERVICES: list[ServiceDict] = [
 ]
 
 TICKETS: list[Ticket] = [
-    Ticket(number=1, name="Shampoo", source="producer_123_id", service_id=1, status="waiting"),
+    Ticket(number=1, name="Alex", service_id=1, items=[Item(name= "Ball", count=1, info="its a ball")], status="waiting"),
 ]
 
 @app.route("/")
 def index():
-    return render_template("index.html", name="Shampoo", tickets=TICKETS)
+    return render_template("index.html", name="Alex", tickets=TICKETS)
 
 @app.route("/queue/<int:ticket_id>")
 def ticket(ticket_id):
@@ -34,9 +36,9 @@ def join():
      
         new_ticket = Ticket(
             number=new_number,
-            name=name,
-            source="-",     
-            service_id=1,       
+            name= name,
+            service_id=1,
+            items=[],
             status="waiting"
         )
         
@@ -48,6 +50,14 @@ def join():
 @app.route("/hello")
 def hello():
     return "Hello, CCC181!"
+
+@app.route("/join")
+def join_form():
+    return render_template("join.html")
+
+@app.route("/staff")
+def staff_dashboard():
+    return "Staff dashboard coming soon"
 
 if __name__ == "__main__":
     app.run(debug=True)

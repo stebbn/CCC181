@@ -330,10 +330,10 @@ Make the home page (`index.html`) a short welcome for the person waiting: your a
 
 **Checkpoint 4**
 
-- [ ] Every page shows the navbar, flash area and footer from `base.html`.
-- [ ] In Chrome DevTools device mode (Ctrl+Shift+M), at 375 px wide the menu collapses into ☰ and opens when tapped.
-- [ ] The active page is highlighted in the menu.
-- [ ] Committed: `git commit -m "Add Bootstrap layout and navigation (#<issue>)"`
+- [X] Every page shows the navbar, flash area and footer from `base.html`.
+- [X] In Chrome DevTools device mode (Ctrl+Shift+M), at 375 px wide the menu collapses into ☰ and opens when tapped.
+- [X] The active page is highlighted in the menu.
+- [X] Committed: `git commit -m "Add Bootstrap layout and navigation (#<issue>)"`
 
 ---
 
