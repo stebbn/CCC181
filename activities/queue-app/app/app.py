@@ -10,7 +10,7 @@ SERVICES: list[ServiceDict] = [
 ]
 
 TICKETS: list[Ticket] = [
-    Ticket(number=1, name="Alex", service_id=1, items=[Item(name= "Ball", count=1, info="its a ball")], status="waiting"),
+    Ticket(number=1, name="Alex", service_id=1, items=[Item(name= "Ball", count=1, info="its a ball")], status="Waiting"),
 ]
 
 def getQueuePlacement() -> int:
@@ -23,12 +23,26 @@ def getNextPlacement() -> int:
 def index():
     return render_template("index.html", name="", tickets=TICKETS)
 
-@app.route("/queue/<int:ticket_id>")
+@app.get("/queue/<int:ticket_id>")
 def ticket(ticket_id):
-    for position, t in enumerate(TICKETS, start=1):
-        if t.number== ticket_id:
-            return render_template("ticket.html", ticket=t, position=position)
-    abort(404)
+    t = next((t for t in TICKETS if t.number == ticket_id), None)
+    if t is None:
+        abort(404)
+    ahead = [x for x in TICKETS
+             if x.service_id == t.service_id
+             and x.status == "Waiting"
+             and x.number < t.number]
+    service = next(s for s in SERVICES if s["id"] == t.service_id)
+    return render_template("ticket.html", ticket=t, service=service, ahead=len(ahead))
+
+@app.post("/queue/<int:ticket_id>/leave")
+def leave_queue(ticket_id):
+    t = next((t for t in TICKETS if t.number == ticket_id), None)
+    if t is None:
+        abort(404)
+    t.status = "No-Show"
+    flash(f"Ticket #{ticket_id} has left the queue.", "success")
+    return redirect(url_for("index"))
 
 @app.post("/join")
 def join():
@@ -77,7 +91,7 @@ def join():
             Item(name=item, count=count, info="")
             for item, count in zip(item_names, item_counts)
         ],
-        status="waiting",
+        status="Waiting",
     ))
 
     print(TICKETS[number-1])

@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import TypedDict, Literal
 
-type status_types = Literal["waiting", "processing", "none", "completed"]
+type status_types = Literal["Waiting", "Processing", "None", "Completed", "No-Show"]
 
 @dataclass
 class Item:
