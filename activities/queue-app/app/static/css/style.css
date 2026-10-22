@@ -51,9 +51,9 @@ footer {
 }
 
 /* Join-queue form */
-.button, .join-form button {
+.button, .add-item, .join-form button {
   display: inline-block;
-  background: var(--teal);
+  background: var(--navy);
   color: #fff;
   border: none;
   border-radius: 8px;
@@ -61,6 +61,18 @@ footer {
   font: inherit;
   text-decoration: none;
   cursor: pointer;
+}
+
+.add-item {
+  background: var(--teal);
+  display: flex;
+  align-items: center;
+  justify-content: center; 
+
+  width: 50%;
+  gap: 0.5;
+  
+  margin: 0 auto; 
 }
 
 .join-form {
@@ -75,6 +87,10 @@ footer {
   border: 1px solid #C9C4B8;
   border-radius: 6px;
   font: inherit;
+}
+
+.quantity-input {
+  max-width: 4rem;
 }
 
 .error { color: var(--orange); font-weight: 600; }

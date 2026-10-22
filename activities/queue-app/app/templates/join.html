@@ -1,20 +1,136 @@
 {% extends "base.html" %}
-
-{% block title %}Join the queue · ClinicQ{% endblock %}
+{% block title %}Join the queue · YourApp{% endblock %}
 
 {% block content %}
-  <h2>Join the queue</h2>
+<div class="row justify-content-center">
+  <div class="col-12 col-md-8 col-lg-6">
+    <h1 class="h3 mb-3">Join the queue</h1>
 
-  {% if error %}
-    <p class="error">{{ error }}</p>
-  {% endif %}
+    <form method="post" action="{{ url_for('join') }}" id="join-form">
+      <div class="mb-3">
+        <label for="name" class="form-label">Your name</label>
+        <input id="name" name="name" type="text" autocomplete="name" required
+               class="form-control {% if errors and errors.name %}is-invalid{% endif %}"
+               value="{{ form.get('name', '') }}"
+               {% if errors and errors.name %}aria-describedby="name-error"{% endif %}>
+        {% if errors and errors.name %}
+          <div id="name-error" class="invalid-feedback">{{ errors.name }}</div>
+        {% endif %}
+      </div>
 
-  {# method="post" sends the form to the same URL as a POST request #}
-  <form method="post" class="join-form">
-    <label for="name">Your name</label>
-    <input id="name" name="name" type="text" autofocus>
-    <button type="submit">Get a ticket</button>
-  </form>
+      <div class="mb-3">
+        <label for="service_id" class="form-label">Service</label>
+        <select id="service_id" name="service_id" required
+                class="form-select {% if errors and errors.service_id %}is-invalid{% endif %}">
+          <option value="">Choose a service…</option>
+          {% for s in services %}
+            <option value="{{ s.id }}"
+              {% if form.get('service_id') == s.id|string %}selected{% endif %}>{{ s.name }}</option>
+          {% endfor %}
+        </select>
+        {% if errors and errors.service_id %}
+          <div class="invalid-feedback">{{ errors.service_id }}</div>
+        {% endif %}
+      </div>
 
-  <p><a href="{{ url_for('index') }}">&larr; Back to the queue</a></p>
+      <div class="mb-3">
+        <label class="form-label">Items</label>
+        <div id="items-container">
+          {% for item in item_values %}
+            <div class="item-row d-flex gap-2 mb-2">
+              <input type="text" name="items[]" placeholder="Item {{ loop.index }}" required
+                     aria-label="Item {{ loop.index }}"
+                     class="form-control {% if errors and errors['items'] %}is-invalid{% endif %}"
+                     value="{{ item }}">
+              <input type="number" name="counts[]" min="1" step="1" required
+                     aria-label="Quantity for item {{ loop.index }}"
+                     class="form-control quantity-input {% if errors and errors.counts %}is-invalid{% endif %}"
+                     value="{{ count_values[loop.index0] if loop.index0 < count_values|length else '1' }}">
+              <button type="button" class="remove-item-btn btn btn-outline-secondary"
+                      aria-label="Remove item {{ loop.index }}">Remove</button>
+            </div>
+          {% endfor %}
+        </div>
+        {% if errors and errors['items'] %}
+          <div class="invalid-feedback d-block">{{ errors['items'] }}</div>
+        {% endif %}
+        {% if errors and errors.counts %}
+          <div class="invalid-feedback d-block">{{ errors.counts }}</div>
+        {% endif %}
+        <button type="button" class="add-item" id="add-item-btn" aria-label="Add another item">+</button>
+      </div>
+
+      <button type="submit" class="btn btn-primary w-100">Get a ticket</button>
+    </form>
+  </div>
+</div>
+
+<script>
+  const itemsContainer = document.getElementById("items-container");
+  const addItemButton = document.getElementById("add-item-btn");
+
+  function updateItemLabels() {
+    itemsContainer.querySelectorAll(".item-row").forEach((row, index) => {
+      const number = index + 1;
+      const inputs = row.querySelectorAll("input");
+      inputs[0].placeholder = `Item ${number}`;
+      inputs[0].setAttribute("aria-label", `Item ${number}`);
+      inputs[1].setAttribute("aria-label", `Quantity for item ${number}`);
+      row.querySelector(".remove-item-btn").setAttribute("aria-label", `Remove item ${number}`);
+    });
+  }
+
+  function removeRow() {
+    itemsContainer.querySelector(".item-row").forEach((row, index) => {
+      const number = index + 1;
+      const inputs = row.querySelectorAll("input");
+      inputs[0].placeholder = `Item ${number}`;
+      inputs[0].setAttribute("aria-label", `Item ${number}`);
+      inputs[1].setAttribute("aria-label", `Quantity for item ${number}`);
+      row.querySelector(".remove-item-btn").setAttribute("aria-label", `Remove item ${number}`);
+    }); 
+  }
+
+  addItemButton.addEventListener("click", () => {
+    const row = document.createElement("div");
+    row.className = "item-row d-flex gap-2 mb-2";
+
+    const input = document.createElement("input");
+    input.type = "text";
+    input.name = "items[]";
+    input.required = true;
+    input.className = "form-control";
+
+    const countInput = document.createElement("input");
+    countInput.type = "number";
+    countInput.name = "counts[]";
+    countInput.min = "1";
+    countInput.step = "1";
+    countInput.required = true;
+    countInput.value = "1";
+    countInput.className = "form-control quantity-input";
+
+    const removeButton = document.createElement("button");
+    removeButton.type = "button";
+    removeButton.className = "remove-item-btn btn btn-outline-secondary";
+    removeButton.textContent = "Remove";
+    removeButton.addEventListener("click", () => {
+      row.remove();
+      updateItemLabels();
+    });
+
+    row.append(input, countInput, removeButton);
+    itemsContainer.appendChild(row);
+    updateItemLabels();
+    input.focus();
+  });
+
+  itemsContainer.querySelectorAll(".remove-item-btn").forEach((button) => {
+    button.addEventListener("click", () => {
+      button.closest(".item-row").remove();
+      updateItemLabels();
+    });
+  });
+</script>
+
 {% endblock %}
