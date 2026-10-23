@@ -1,0 +1,136 @@
+{% extends "base.html" %}
+
+{% block title %}Staff dashboard · WarehouseQ{% endblock %}
+
+{% block content %}
+  <h1 class="h2 mb-4">Staff queue</h1>
+
+  <form method="get" action="{{ url_for('staff_dashboard') }}" class="row g-2 align-items-end mb-4">
+    <div class="col-12 col-sm-6 col-md-4">
+      <label for="service-filter" class="form-label">Filter by service</label>
+      <select id="service-filter" name="service_id" class="form-select">
+        <option value="">All services</option>
+        {% for service in services %}
+          <option value="{{ service.id }}"
+                  {% if selected == service.id %}selected{% endif %}>
+            {{ service.name }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn btn-outline-primary">Filter</button>
+    </div>
+  </form>
+
+  {% if current_ticket %}
+    {% set current_item_total = current_ticket.items|default([], true)|sum(attribute="count") %}
+    <section class="staff-current mb-4" aria-labelledby="now-serving-heading">
+
+      <h2 id="now-serving-heading" class="staff-current-label">Now Serving</h2>
+      <span class="staff-ticket-service">{{ names[current_ticket.service_id] }}</span>
+      
+      <div class="staff-current-ticket">
+        <span class="staff-ticket-number">#{{ current_ticket.number }}</span>
+        <span class="staff-ticket-name">{{ current_ticket.name }}</span>
+      </div>
+
+      <div class="staff-current-actions">
+        <details class="staff-items">
+          <summary>View items ({{ current_item_total }})</summary>
+          {% if current_ticket.items %}
+            <ul class="staff-item-list">
+              {% for item in current_ticket.items %}
+                <li><span>{{ item.name }}</span><span>{{ item.count }}</span></li>
+              {% endfor %}
+            </ul>
+          {% else %}
+            <p class="mb-0 mt-2">No items listed.</p>
+          {% endif %}
+        </details>
+
+        <form method="post"
+              action="{{ url_for('staff_action', ticket_id=current_ticket.number, action='serve') }}">
+          {% if selected is not none %}
+            <input type="hidden" name="service_id" value="{{ selected }}">
+          {% endif %}
+          <button type="submit" class="btn btn-success btn-lg">
+            Mark as Done
+          </button>
+        </form>
+
+      </div>
+    </section>
+  {% endif %}
+
+  <div class="d-flex flex-wrap align-items-center justify-content-between gap-3 mb-3">
+    <h2 class="h4 mb-0">Queue</h2>
+    <form method="post" action="{{ url_for('staff_call_next') }}">
+      {% if selected is not none %}
+        <input type="hidden" name="service_id" value="{{ selected }}">
+      {% endif %}
+      <button type="submit" class="btn btn-primary"
+              aria-label="Call next waiting ticket"
+              {% if waiting_count == 0 %}disabled{% endif %}>
+        Call next
+      </button>
+    </form>
+  </div>
+
+  {% if queue %}
+    <div class="staff-queue" aria-label="Waiting and called tickets, ordered by ticket number">
+      {% for ticket in queue %}
+        {% set item_total = ticket.items|default([], true)|sum(attribute="count") %}
+          {% if ticket.status != "Processing" %} <!-- bakit wlng continue sa jinja ano to -->
+            <article class="staff-queue-card">
+
+              <span class="staff-queue-position" aria-label="Queue position {{ loop.index }}">{{ loop.index }}</span>
+              <div class="staff-queue-ticket">
+
+                <div class="staff-queue-ticket-heading">
+                  <a class="staff-ticket-number"
+                    href="{{ url_for('ticket', ticket_id=ticket.number) }}">#{{ ticket.number }}</a>
+                  <span class="staff-ticket-name">{{ ticket.name }}</span>
+                </div>
+
+                <span class="staff-ticket-service">{{ names[ticket.service_id] }}</span>
+                
+                <details class="staff-items">
+                  <summary>View items ({{ item_total }})</summary>
+                  {% if ticket.items %}
+                    <ul class="staff-item-list">
+                      {% for item in ticket.items %}
+                        <li><span>{{ item.name }}</span><span>{{ item.count }}</span></li>
+                      {% endfor %}
+                    </ul>
+                  {% else %}
+                    <p class="mb-0 mt-2">No items listed.</p>
+                  {% endif %}
+                </details>
+
+              </div>
+
+              {% if ticket.status == "Waiting" %}
+                <form method="post"
+                      action="{{ url_for('staff_action', ticket_id=ticket.number, action='no-show') }}">
+                  {% if selected is not none %}
+                    <input type="hidden" name="service_id" value="{{ selected }}">
+                  {% endif %}
+                  <button type="submit" class="btn btn-sm btn-outline-danger"
+                          aria-label="Mark ticket {{ ticket.number }} as no-show">
+                    No-show
+                  </button>
+                </form>
+              {% endif %}
+
+            </article>
+          {% endif %}
+      {% endfor %}
+    </div>
+  {% else %}
+    <div class="alert alert-light border" role="status">
+      <h3 class="h5">No tickets in this queue</h3>
+      <p class="mb-0">There are no waiting or called tickets{% if selected is not none %} for this service{% endif %} right now.</p>
+    </div>
+  {% endif %}
+{% endblock %}

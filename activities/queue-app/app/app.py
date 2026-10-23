@@ -113,9 +113,72 @@ def join_form():
         count_values=["1"],
     )
 
-@app.route("/staff")
+@app.get("/staff")
 def staff_dashboard():
-    return "Staff dashboard coming soon"
+    service_id = request.args.get("service_id", type=int)
+    queue = [t for t in TICKETS if t.status in ("Waiting", "Processing")]
+
+    if service_id is not None:
+        queue = [t for t in queue if t.service_id == service_id]
+    queue.sort(key=lambda ticket: ticket.number)
+    waiting_count = sum(ticket.status == "Waiting" for ticket in queue)
+    current_ticket = next(
+        (ticket for ticket in queue if ticket.status == "Processing"),
+        None,
+    )
+
+    names = {s["id"]: s["name"] for s in SERVICES}
+    waiting_counts = {
+        service["id"]: sum(
+            ticket.service_id == service["id"] and ticket.status == "Waiting"
+            for ticket in TICKETS
+        )
+        for service in SERVICES
+    }
+    return render_template("staff.html", queue=queue, services=SERVICES,
+                           names=names, selected=service_id,
+                           waiting_counts=waiting_counts,
+                           waiting_count=waiting_count,
+                           current_ticket=current_ticket)
+
+
+@app.post("/staff/call-next")
+def staff_call_next():
+    service_id = request.form.get("service_id", type=int)
+    waiting = [
+        ticket for ticket in TICKETS
+        if ticket.status == "Waiting"
+        and (service_id is None or ticket.service_id == service_id)
+    ]
+    next_ticket = min(waiting, key=lambda ticket: ticket.number, default=None)
+
+    if next_ticket is None:
+        flash("There are no waiting tickets for this service.", "warning")
+    else:
+        next_ticket.status = "Processing"
+        flash(f"Ticket #{next_ticket.number} has been called.", "success")
+
+    return redirect(url_for("staff_dashboard", service_id=service_id))
+
+staff_status_call: dict[Literal["call", "serve", "no-show"], status_types] = {
+    "call": "Processing",
+    "serve": "Completed",
+    "no-show": "No-Show",
+}
+
+@app.post("/staff/tickets/<int:ticket_id>/<action>")
+def staff_action(ticket_id, action):
+    new_status = staff_status_call.get(action)
+    t = next((t for t in TICKETS if t.number == ticket_id), None)
+
+    if t is None or new_status is None:
+        abort(404)
+
+    t.status = new_status
+
+    flash(f"Ticket #{ticket_id} marked {new_status}.", "info")
+    service_id = request.form.get("service_id", type=int)
+    return redirect(url_for("staff_dashboard", service_id=service_id))
 
 if __name__ == "__main__":
     app.run(debug=True)

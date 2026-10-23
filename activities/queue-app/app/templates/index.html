@@ -1,10 +1,6 @@
 {% extends "base.html" %}
 
 {% block content %}
-  <p>Hello!</p>
-
-  <p><a class="button" href="{{ url_for('join') }}">Join the queue</a></p>
-
   <h2>Tickets in the queue</h2>
   <ul class="tickets">
     {% for t in tickets %}
