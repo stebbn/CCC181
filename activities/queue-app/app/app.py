@@ -180,5 +180,16 @@ def staff_action(ticket_id, action):
     service_id = request.form.get("service_id", type=int)
     return redirect(url_for("staff_dashboard", service_id=service_id))
 
+@app.get("/queue/<int:ticket_id>/status.json")
+def ticket_status(ticket_id):
+    t = next((t for t in TICKETS if t.number == ticket_id), None)
+    if t is None:
+        abort(404)
+    ahead = sum(1 for x in TICKETS
+                if x.service_id == t.service_id
+                and x.status == "Waiting" and x.number < t.number)
+    
+    return {"status": t.status, "ahead": ahead}
+
 if __name__ == "__main__":
     app.run(debug=True)

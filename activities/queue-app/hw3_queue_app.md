@@ -588,10 +588,10 @@ Finish the two lines inside `refreshStatus` yourself. Test it with two browser w
 
 **Checkpoint 8**
 
-- [ ] Double-clicking Get a ticket creates only one ticket.
-- [ ] My place updates its status and position within 10 seconds after a staff action, with no reload.
-- [ ] Nothing in the browser console is red.
-- [ ] Committed.
+- [X] Double-clicking Get a ticket creates only one ticket.
+- [X] My place updates its status and position within 10 seconds after a staff action, with no reload.
+- [X] Nothing in the browser console is red.
+- [X] Committed.
 
 ---
 
