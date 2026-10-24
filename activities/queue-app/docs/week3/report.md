@@ -8,7 +8,7 @@
 - **Student ID:** 2024-1070
 - **Section:** CS3A
 - **Date:** October 24, 2026
-- **Pull request:** "update later"
+- **Pull request:** https://github.com/stebbn/CCC181/pull/2
 
 ## Personas
 
