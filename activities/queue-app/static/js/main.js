@@ -1,13 +1,20 @@
 // Served at /static/js/main.js and linked from templates/base.html.
 
-const joinForm = document.getElementById("join-form_button");
+const joinForm = document.getElementById("join-form");
 if (joinForm) {
-   //print("found join form")
-   // ^ y ts opens my printer ;-;
+  joinForm.addEventListener("submit", (event) => {
+    if (!joinForm.reportValidity()) {
+      event.preventDefault();
+      return;
+    }
 
-  joinForm.addEventListener("submit", () => {
-    const button = joinForm.querySelector("button[type=submit]");
-    button.disabled = true;
-    button.textContent = "Getting your ticket…";
+    const submitButton = joinForm.querySelector('button[type="submit"]');
+    if (submitButton.disabled) {
+      event.preventDefault();
+      return;
+    }
+
+    submitButton.disabled = true;
+    submitButton.textContent = "Getting your ticket…";
   });
 }
