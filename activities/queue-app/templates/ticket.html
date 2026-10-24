@@ -3,14 +3,12 @@
 {% block title %}Ticket #{{ ticket.number }} · WarehouseQ{% endblock %}
 
 {% block content %}
-  <div class="row justify-content-center">
-    <div class="col-12 col-md-8 col-lg-6">
-      <h1 class="h3 mb-3">My place in the queue</h1>
-
-      <div class="card">
+  <section class="ticket-screen" aria-labelledby="ticket-heading">
+      <div class="card ticket-card">
         <div class="card-body text-center">
+          <h1 class="h3 mb-4" id="ticket-heading">My place in the queue</h1>
           <p class="text-body-secondary mb-1">{{ service.name }}</p>
-          <p class="display-1 fw-bold mb-3">#{{ ticket.number }}</p>
+          <p class="ticket-number fw-bold mb-4">#{{ ticket.number }}</p>
 
           <div id="live-status" aria-live="polite">
             {% if ticket.status == "Waiting" %}
@@ -41,8 +39,7 @@
           {% endif %}
         </div>
       </div>
-    </div>
-  </div>
+  </section>
 {% endblock %}
 
 {% block scripts %}

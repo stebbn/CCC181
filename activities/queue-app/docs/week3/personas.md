@@ -6,7 +6,7 @@
 
 | | |
 | --- | --- |
-| **Photo or sketch** | <img src="assets/Alex.jpg" width="20%"> |
+| **Photo or sketch** | <img src="../../assets/Alex.jpg" width="20%"> |
 | **Age, role and background** | 34, Logistics Coordinator/Driver for a mid-sized retail supplier. Handles daily drop-offs and pickups. |
 | **Goals** | - Get items checked or prepared for shipment<br> - Know when the items are ready for the next step<br> - Avoid losing time waiting without an update. |
 | **Frustrations** | 1. Not knowing the estimated wait time, trapping them at the facility.<br>2. Missing their turn because the warehouse floor is too loud to hear verbal call-outs.<br>3. Confusion over whether to queue in the "Check" or "Ship" lane upon arrival. |
@@ -40,7 +40,7 @@ Alex brings a batch of items to the warehouse for checking before they can be sh
 
 | | |
 | --- | --- |
-| **Photo or sketch** | <img src="assets/Jade.jpg" width="22%"> |
+| **Photo or sketch** | <img src="../../assets/Jade.jpg" width="22%"> |
 | **Age, role and background** | 28, Warehouse Receiving Specialist. 4 years of inventory processing experience. |
 | **Goals** | - Process items in the right order<br>- Identify whether a request is for checking or shipping<br>- Keep ticket statuses accurate as work is completed. |
 | **Frustrations** | 1. Illegible handwriting on physical queue slips causing processing delays.<br>2. Customers constantly approaching the desk out of turn to ask for status updates, interrupting workflow.<br>3. Accidentally mixing up "To Check" and "To Ship" priorities during rush hours. |

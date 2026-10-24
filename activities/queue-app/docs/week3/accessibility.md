@@ -1,10 +1,10 @@
 ## Devtools:
 
 ### Lighthouse:
-![alt text](assets/lighthouse.png)
+![Lighthouse results](../../assets/lighthouse.png)
 
 ### Tab, Shift-Tab:
-<video controls src="assets/tab-test.mp4" title="Title"></video>
+<video controls src="../../assets/tab-test.mp4" title="Keyboard navigation test"></video>
 
 ## Checklist:
 | Check | Join | My place | Staff |
