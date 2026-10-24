@@ -1,0 +1,85 @@
+{% extends "base.html" %}
+
+{% block title %}Ticket #{{ ticket.number }} · WarehouseQ{% endblock %}
+
+{% block content %}
+  <section class="ticket-screen" aria-labelledby="ticket-heading">
+      <div class="card ticket-card">
+        <div class="card-body text-center">
+          <h1 class="h3 mb-4" id="ticket-heading">My place in the queue</h1>
+          <p class="text-body-secondary mb-1">{{ service.name }}</p>
+          <p class="ticket-number fw-bold mb-4">#{{ ticket.number }}</p>
+
+          <div id="live-status" aria-live="polite">
+            {% if ticket.status == "Waiting" %}
+              <span class="badge text-bg-warning" id ="status_changeable">{{ ticket.status }}</span>
+            {% elif ticket.status == "Processing" %}
+              <span class="badge text-bg-info" id ="status_changeable">{{ ticket.status }}</span>
+            {% elif ticket.status == "Completed" %}
+              <span class="badge text-bg-success" id ="status_changeable">{{ ticket.status }}</span>
+            {% else %}
+              <span class="badge text-bg-secondary" id ="status_changeable">{{ ticket.status }}</span>
+            {% endif %}
+
+            {% if ticket.status == "Completed" %}
+              <p class="mt-3 mb-0" id="queue_changeable">{{ service.info.completed }}</p>
+            {% elif (ahead == 0) %}
+              <p class="mt-3 mb-0" id="queue_changeable">If any issues please inquire staff.</p>
+            {% elif (ahead == 0) %}
+              <p class="mt-3 mb-0" id="queue_changeable">You're next!</p>
+            {% else %}
+              <p class="mt-3 mb-0" id = "queue_changeable">{{ ahead }} people ahead of you</p>
+            {% endif %}
+          </div>
+
+          {% if ticket.status == "Waiting" %}
+            <form method="post" action="{{ url_for('leave_queue', ticket_id=ticket.number) }}" class="mt-4">
+              <button type="submit" class="btn btn-outline-danger" id="leave-queue">Leave the queue</button>
+            </form>
+          {% endif %}
+        </div>
+      </div>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+<script>
+  const statusUrl = "{{ url_for('ticket_status', ticket_id=ticket.number) }}";
+  async function refreshStatus() {
+    try {
+      const res = await fetch(statusUrl);
+      if (!res.ok) return;
+      const data = await res.json();
+      
+      const queue_text = document.getElementById("queue_changeable");
+      const queue_status = document.getElementById("status_changeable");
+  
+      if (queue_text) {
+        if (data.status === "Completed") {
+          queue_text.textContent = data.completion_message;
+        } else if (data.status === "Processing" || data.status === "No-Show")
+          queue_text.textContent = "If any issues please inquire staff.";
+        else if (data.ahead <= 0) {
+          queue_text.textContent = "You're next!";
+        } else {
+          queue_text.textContent = `${data.ahead} people ahead of you`;
+        }
+      }
+
+      if (data.status === "Processing") {
+        queue_status.className = "badge text-bg-info";
+        document.getElementById("leave-queue")?.remove();
+      } else if (data.status === "Completed") {
+        queue_status.className = "badge text-bg-success";
+      }
+
+      queue_status.textContent = data.status;
+
+
+    } catch (err) {
+      console.warn("Could not refresh status", err);
+    }
+  }
+  setInterval(refreshStatus, 1000);
+</script>
+{% endblock %}

@@ -99,9 +99,9 @@ Everything you build this week is the base for the rest of the semester. In Week
 
 **Checkpoint 0**
 
-- [ ] The app runs with `flask --app app run --debug` and shows your system's name, not ClinicQ.
-- [ ] `SERVICES` holds your real services, and tickets have a `status`.
-- [ ] You committed: `git commit -m "Set up <YourApp> from the Week 2 starter (#<issue>)"`
+- [X] The app runs with `flask --app app run --debug` and shows your system's name, not ClinicQ.
+- [X] `SERVICES` holds your real services, and tickets have a `status`.
+- [X] You committed: `git commit -m "Set up <YourApp> from the Week 2 starter (#<issue>)"`
 
 ---
 
@@ -163,10 +163,10 @@ Rules for good personas:
 
 **Checkpoint 1**
 
-- [ ] `docs/week3/personas.md` has two complete personas: the person waiting and the staff member.
-- [ ] Each persona has a real quote, a scenario, a top-tasks table with requirement IDs, and at least three *"Because …, my interface must …"* statements.
-- [ ] No photo of a real person you interviewed is used.
-- [ ] Committed: `git commit -m "Add Week 3 personas (#<issue>)"`
+- [X] `docs/week3/personas.md` has two complete personas: the person waiting and the staff member.
+- [X] Each persona has a real quote, a scenario, a top-tasks table with requirement IDs, and at least three *"Because …, my interface must …"* statements.
+- [X] No photo of a real person you interviewed is used.
+- [X] Committed: `git commit -m "Add Week 3 personas (#<issue>)"`
 
 ---
 
@@ -193,10 +193,10 @@ Save the files as `docs/week3/wireframes/` (PNG, JPG or PDF), for example `join-
 
 **Checkpoint 2**
 
-- [ ] Six frames: three screens, each at phone and laptop width.
-- [ ] Every frame names the persona, the device, and the requirement IDs.
-- [ ] The main flow for each persona is marked with arrows.
-- [ ] Committed in `docs/week3/wireframes/`.
+- [X] Six frames: three screens, each at phone and laptop width.
+- [X] Every frame names the persona, the device, and the requirement IDs.
+- [X] The main flow for each persona is marked with arrows.
+- [X] Committed in `docs/week3/wireframes/`.
 
 ---
 
@@ -223,9 +223,9 @@ Update your wireframes with the changes before you start Part 4.
 
 **Checkpoint 3**
 
-- [ ] `docs/week3/feedback.md` has a review of all three screens in the *Works well / Problem / Change* format.
-- [ ] Your wireframes are updated, or `feedback.md` explains why you kept them.
-- [ ] Committed.
+- [X] `docs/week3/feedback.md` has a review of all three screens in the *Works well / Problem / Change* format.
+- [X] Your wireframes are updated, or `feedback.md` explains why you kept them.
+- [X] Committed.
 
 ---
 
@@ -330,10 +330,10 @@ Make the home page (`index.html`) a short welcome for the person waiting: your a
 
 **Checkpoint 4**
 
-- [ ] Every page shows the navbar, flash area and footer from `base.html`.
-- [ ] In Chrome DevTools device mode (Ctrl+Shift+M), at 375 px wide the menu collapses into ☰ and opens when tapped.
-- [ ] The active page is highlighted in the menu.
-- [ ] Committed: `git commit -m "Add Bootstrap layout and navigation (#<issue>)"`
+- [X] Every page shows the navbar, flash area and footer from `base.html`.
+- [X] In Chrome DevTools device mode (Ctrl+Shift+M), at 375 px wide the menu collapses into ☰ and opens when tapped.
+- [X] The active page is highlighted in the menu.
+- [X] Committed: `git commit -m "Add Bootstrap layout and navigation (#<issue>)"`
 
 ---
 
@@ -434,10 +434,10 @@ What to notice:
 
 **Checkpoint 5**
 
-- [ ] Submitting an empty form shows a red alert and a message under each wrong field, and keeps the typed values.
-- [ ] A valid submission redirects to My place with a green success alert.
-- [ ] At least one field specific to your setting is in the form and validated on the server.
-- [ ] Committed.
+- [X] Submitting an empty form shows a red alert and a message under each wrong field, and keeps the typed values.
+- [X] A valid submission redirects to My place with a green success alert.
+- [X] At least one field specific to your setting is in the form and validated on the server.
+- [X] Committed.
 
 ---
 
@@ -473,10 +473,10 @@ Wrap the status and position in an element with an id, such as `<div id="live-st
 
 **Checkpoint 6**
 
-- [ ] My place shows number, service, status badge and position, and reads clearly at 375 px.
-- [ ] Visiting a ticket number that does not exist shows a 404.
-- [ ] Leave the queue works and shows a flash message.
-- [ ] Committed.
+- [X] My place shows number, service, status badge and position, and reads clearly at 375 px.
+- [X] Visiting a ticket number that does not exist shows a 404.
+- [X] Leave the queue works and shows a flash message.
+- [X] Committed.
 
 ---
 
@@ -523,11 +523,11 @@ Staff login comes in a later week. For now the dashboard is open; say so in your
 
 **Checkpoint 7**
 
-- [ ] The dashboard lists waiting and called tickets in order and filters by service.
-- [ ] Call next, Serve and No-show change the status, and the change shows on that ticket's My place page.
-- [ ] At 375 px the table scrolls sideways inside its box instead of breaking the page.
-- [ ] One ★ requirement from your setting is visible on the dashboard.
-- [ ] Committed.
+- [X] The dashboard lists waiting and called tickets in order and filters by service.
+- [X] Call next, Serve and No-show change the status, and the change shows on that ticket's My place page.
+- [X] At 375 px the table scrolls sideways inside its box instead of breaking the page.
+- [X] One ★ requirement from your setting is visible on the dashboard.
+- [X] Committed.
 
 ---
 
@@ -588,10 +588,10 @@ Finish the two lines inside `refreshStatus` yourself. Test it with two browser w
 
 **Checkpoint 8**
 
-- [ ] Double-clicking Get a ticket creates only one ticket.
-- [ ] My place updates its status and position within 10 seconds after a staff action, with no reload.
-- [ ] Nothing in the browser console is red.
-- [ ] Committed.
+- [X] Double-clicking Get a ticket creates only one ticket.
+- [X] My place updates its status and position within 10 seconds after a staff action, with no reload.
+- [X] Nothing in the browser console is red.
+- [X] Committed.
 
 ---
 
@@ -614,19 +614,19 @@ Can you see where the focus is at every step? Can you reach and use every contro
 
 | Check | Join | My place | Staff |
 | --- | --- | --- | --- |
-| Every input has a visible label | | | |
-| Error messages say what to do, in text | | | |
-| Status is shown in words, not only color | | | |
-| Text and buttons are readable at 375 px with no sideways page scroll | | | |
-| Buttons are at least about 44 × 44 px on a phone | | | |
-| Page has one `<h1>` and headings in order | | | |
-| `<html lang="en">` (or your language) is set | | | |
+| Every input has a visible label |✅|✅|✅|
+| Error messages say what to do, in text |✅|✅|✅|
+| Status is shown in words, not only color |✅|✅|✅|
+| Text and buttons are readable at 375 px with no sideways page scroll |✅|✅|✅|
+| Buttons are at least about 44 × 44 px on a phone |✅|✅|✅|
+| Page has one `<h1>` and headings in order |✅|✅|✅|
+| `<html lang="en">` (or your language) is set |✅|✅|✅|
 
 **Checkpoint 9**
 
-- [ ] `docs/week3/accessibility.md` has a Lighthouse score and screenshot for each screen, the keyboard test notes, and the completed checklist.
-- [ ] Each screen scores 90 or higher, or the file explains what is left and why.
-- [ ] Committed.
+- [X] `docs/week3/accessibility.md` has a Lighthouse score and screenshot for each screen, the keyboard test notes, and the completed checklist.
+- [X] Each screen scores 90 or higher, or the file explains what is left and why.
+- [X] Committed.
 
 ---
 
@@ -701,10 +701,10 @@ Commit it: `git commit -m "Add Week 3 report (#<issue>)"`. Then open your branch
 
 **Checkpoint 10 (submission)**
 
-- [ ] Usability test notes and the improvement are in `docs/week3/usability-test.md`.
-- [ ] `docs/week3/report.md` is in your repository and displays correctly on GitHub.
-- [ ] Your pull request is **merged** into `main` and tagged `week3`.
-- [ ] The link to your report at the `week3` tag is submitted to the **Week 3 assignment on MOLE** before the due date.
+- [X] Usability test notes and the improvement are in `docs/week3/usability-test.md`.
+- [X] `docs/week3/report.md` is in your repository and displays correctly on GitHub.
+- [] Your pull request is **merged** into `main` and tagged `week3`.
+- [X] The link to your report at the `week3` tag is submitted to the **Week 3 assignment on MOLE** before the due date.
 
 ---
 
@@ -767,13 +767,13 @@ Late work follows the late policy in the course syllabus.
 
 ## Checklist before you submit
 
-- [ ] My app shows my own system's name, services and fields, not ClinicQ's.
-- [ ] `docs/week3/personas.md` has my two personas, each with a real quote, scenario, top tasks and design rules.
-- [ ] Six wireframes are in `docs/week3/wireframes/`, and `feedback.md` has my self-review of all three screens.
-- [ ] Join, My place and Staff dashboard all work, on a phone width and a laptop width.
-- [ ] The join form validates every field on the server and keeps the user's input on error.
-- [ ] Staff actions use POST forms, and My place updates by itself within 10 seconds.
-- [ ] `accessibility.md` has Lighthouse scores, keyboard notes and the checklist.
-- [ ] `usability-test.md` has a real user's results and one improvement with before and after.
-- [ ] My pull request is merged into `main` and tagged `week3`.
-- [ ] `docs/week3/report.md` is in my repository with my PR link at the top, and I submitted its `week3` link on MOLE.
+- [X] My app shows my own system's name, services and fields, not ClinicQ's.
+- [X] `docs/week3/personas.md` has my two personas, each with a real quote, scenario, top tasks and design rules.
+- [X] Six wireframes are in `docs/week3/wireframes/`, and `feedback.md` has my self-review of all three screens.
+- [X] Join, My place and Staff dashboard all work, on a phone width and a laptop width.
+- [X] The join form validates every field on the server and keeps the user's input on error.
+- [X] Staff actions use POST forms, and My place updates by itself within 10 seconds.
+- [X] `accessibility.md` has Lighthouse scores, keyboard notes and the checklist.
+- [X] `usability-test.md` has a real user's results and one improvement with before and after.
+- [] My pull request is merged into `main` and tagged `week3`.
+- [X] `docs/week3/report.md` is in my repository with my PR link at the top, and I submitted its `week3` link on MOLE.
