@@ -2,6 +2,7 @@
 :root {
   --navy: #16223A;
   --paper: #F6F4EE;
+  --gray: #7c7a7a;
   --card: #FFFDF8;
   --teal: #2D6F78;
   --orange: #B4501E;
@@ -64,7 +65,7 @@ footer {
 }
 
 .add-item {
-  background: var(--teal);
+  background: var(--gray);
   display: flex;
   align-items: center;
   justify-content: center; 

@@ -6,7 +6,16 @@ app.secret_key = "dev-only-change-me"
 
 
 SERVICES: list[ServiceDict] = [
-    {"id": 1, "name": "To Check"},
+    {
+        "id": 1,
+        "name": "To Check",
+        "info": {"completed": "Your items have been checked and are ready for the next action."},
+    },
+    {
+        "id": 2,
+        "name": "To Ship",
+        "info": {"completed": "Your items are ready to deliver."},
+    },
 ]
 
 TICKETS: list[Ticket] = [
@@ -185,11 +194,16 @@ def ticket_status(ticket_id):
     t = next((t for t in TICKETS if t.number == ticket_id), None)
     if t is None:
         abort(404)
+    service = next(s for s in SERVICES if s["id"] == t.service_id)
     ahead = sum(1 for x in TICKETS
                 if x.service_id == t.service_id
                 and x.status == "Waiting" and x.number < t.number)
     
-    return {"status": t.status, "ahead": ahead}
+    return {
+        "status": t.status,
+        "ahead": ahead,
+        "completion_message": service["info"]["completed"],
+    }
 
 if __name__ == "__main__":
     app.run(debug=True)

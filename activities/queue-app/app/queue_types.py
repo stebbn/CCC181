@@ -23,8 +23,13 @@ class Ticket:
     service_id: int
     status: status_types
 
+class ServiceInfo(TypedDict):
+    completed: str
+
+
 class ServiceDict(TypedDict):
     id: int
     name: str
+    info: ServiceInfo
 
 type TicketTable = list[Ticket]

@@ -614,19 +614,19 @@ Can you see where the focus is at every step? Can you reach and use every contro
 
 | Check | Join | My place | Staff |
 | --- | --- | --- | --- |
-| Every input has a visible label | | | |
-| Error messages say what to do, in text | | | |
-| Status is shown in words, not only color | | | |
-| Text and buttons are readable at 375 px with no sideways page scroll | | | |
-| Buttons are at least about 44 × 44 px on a phone | | | |
-| Page has one `<h1>` and headings in order | | | |
-| `<html lang="en">` (or your language) is set | | | |
+| Every input has a visible label |✅|✅|✅|
+| Error messages say what to do, in text |✅|✅|✅|
+| Status is shown in words, not only color |✅|✅|✅|
+| Text and buttons are readable at 375 px with no sideways page scroll |✅|✅|✅|
+| Buttons are at least about 44 × 44 px on a phone |✅|✅|✅|
+| Page has one `<h1>` and headings in order |✅|✅|✅|
+| `<html lang="en">` (or your language) is set |✅|✅|✅|
 
 **Checkpoint 9**
 
-- [ ] `docs/week3/accessibility.md` has a Lighthouse score and screenshot for each screen, the keyboard test notes, and the completed checklist.
-- [ ] Each screen scores 90 or higher, or the file explains what is left and why.
-- [ ] Committed.
+- [X] `docs/week3/accessibility.md` has a Lighthouse score and screenshot for each screen, the keyboard test notes, and the completed checklist.
+- [X] Each screen scores 90 or higher, or the file explains what is left and why.
+- [X] Committed.
 
 ---
 
