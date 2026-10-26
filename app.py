@@ -1,4 +1,4 @@
-from queue_types import *
+from static.queue_types import *
 from flask import Flask, abort, redirect, render_template, request, url_for, flash
 
 app = Flask(__name__)
