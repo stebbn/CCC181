@@ -2,6 +2,8 @@
 
 WarehouseQ is a Flask queue for warehouse item checking and shipment processing. Drivers choose **To Check** or **To Ship**, enter their name, and list their items and quantities. Staff can view tickets in order, call the next ticket, and update its status.
 
+Project requirements are documented in [docs/requirements.md](docs/requirements.md).
+
 ## Run locally
 
 From the project root, create and activate a virtual environment, install the dependencies, and start Flask:
