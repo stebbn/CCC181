@@ -350,9 +350,9 @@ Update your ERD and `schema.md` with the changes before you start Part 4.
 
 **Checkpoint 3**
 
-- [ ] `docs/week4/schema-review.md` has at least three *Works well / Problem / Change* entries.
-- [ ] Your ERD and `schema.md` are updated, or the review explains why you kept them.
-- [ ] Committed.
+- [X] `docs/week4/schema-review.md` has at least three *Works well / Problem / Change* entries.
+- [X] Your ERD and `schema.md` are updated, or the review explains why you kept them.
+- [X] Committed.
 
 ---
 
