@@ -587,10 +587,10 @@ migrate = Migrate(app, db)
 
 **Checkpoint 5**
 
-- [ ] `models.py` has a class for every table in your ERD, with the keys, constraints and relationships from your `schema.md`.
-- [ ] `requirements.txt` lists Flask-SQLAlchemy, Flask-Migrate, psycopg and python-dotenv with pinned versions.
-- [ ] `flask --app app routes` runs without errors.
-- [ ] Committed: `git commit -m "Add SQLAlchemy models (#<issue>)"`
+- [X] `models.py` has a class for every table in your ERD, with the keys, constraints and relationships from your `schema.md`.
+- [X] `requirements.txt` lists Flask-SQLAlchemy, Flask-Migrate, psycopg and python-dotenv with pinned versions.
+- [X] `flask --app app routes` runs without errors.
+- [X] Committed: `git commit -m "Add SQLAlchemy models (#<issue>)"`
 
 ---
 
@@ -651,10 +651,10 @@ Run `flask --app app seed`, then run it again. The second run must not add dupli
 
 **Checkpoint 6**
 
-- [ ] `\dt` lists all your tables, and `\d` for each one shows the constraints from your `schema.md`.
-- [ ] The `migrations/` folder is committed, including the script in `migrations/versions/`.
-- [ ] `flask --app app seed` adds your services and is safe to run twice.
-- [ ] Committed: `git commit -m "Add initial migration and seed command (#<issue>)"`
+- [X] `\dt` lists all your tables, and `\d` for each one shows the constraints from your `schema.md`.
+- [X] The `migrations/` folder is committed, including the script in `migrations/versions/`.
+- [X] `flask --app app seed` adds your services and is safe to run twice.
+- [X] Committed: `git commit -m "Add initial migration and seed command (#<issue>)"`
 
 ---
 

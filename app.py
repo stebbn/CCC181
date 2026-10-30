@@ -219,5 +219,22 @@ def ticket_status(ticket_id):
         "completion_message": service["info"]["completed"],
     }
 
+@app.cli.command("seed")
+def seed():
+    """Add the starting services if they are not there yet."""
+
+    for service in SERVICES:
+        name = service["name"]
+        exists = db.session.scalar(db.select(Service).filter_by(name=name))
+
+        if exists is None:
+            new_service = Service()
+            new_service.name = name
+            new_service.completed_message = service["info"]["completed"]
+            db.session.add(new_service)
+
+    db.session.commit()
+    print("Services are ready.")
+
 if __name__ == "__main__":
     app.run(debug=True)
