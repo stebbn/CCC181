@@ -17,6 +17,9 @@ flask --app app run --debug
 
 Open <http://127.0.0.1:5000>. The staff dashboard is at <http://127.0.0.1:5000/staff>.
 
+Staff routes are currently open without authentication. Track the planned Week 11
+protection in [issue #4](https://github.com/stebbn/CCC181/issues/4).
+
 ## Project layout
 
 - `app.py`, `queue_types.py`, and `requirements.txt` are at the project root.

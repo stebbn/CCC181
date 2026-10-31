@@ -33,6 +33,10 @@ The schema was set aside for at least an hour before this review. I checked it a
 **Problem:** Driver and staff identities were not stored, so a ticket could only retain a free-form driver name and the schema could not distinguish staff from drivers.
 <br>**Change:** Added `users` with a role check (`driver` or `staff`), optional unique email, and active flag. `tickets.driver_id` references the submitting driver and restricts deleting users with ticket history. Staff action auditing remains out of scope.
 
+### Service management
+
+**Change:** Services have an `is_active` flag so staff can switch a service off without deleting ticket history. Added `avg_minutes` as a positive integer with a default of 10 for service-management estimates.
+
 ## Other checks
 
 - Queue position and no-show totals are computed instead of being stored.

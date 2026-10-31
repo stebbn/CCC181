@@ -104,7 +104,7 @@ def join():
         return (
             render_template(
                 "join.html",
-                services=all_services(),
+                services=active_services(),
                 form=form,
                 errors=errors,
                 item_values=item_names or [""],
@@ -122,7 +122,7 @@ def join():
         return (
             render_template(
                 "join.html",
-                services=all_services(),
+                services=active_services(),
                 form=form,
                 errors=errors,
                 item_values=item_names or [""],
@@ -159,7 +159,7 @@ def join():
         return (
             render_template(
                 "join.html",
-                services=all_services(),
+                services=active_services(),
                 form=form,
                 errors={},
                 item_values=item_names or [""],
@@ -167,8 +167,6 @@ def join():
             ),
             409,
         )
-
-    flash(f"You joined the queue. Your ticket is #{ticket_record.id}.", "success")
     return redirect(url_for("ticket", ticket_id=ticket_record.id))
 
 
@@ -176,7 +174,7 @@ def join():
 def join_form():
     return render_template(
         "join.html",
-        services=all_services(),
+        services=active_services(),
         form={},
         item_values=[""],
         count_values=["1"],
@@ -267,6 +265,122 @@ def staff_action(ticket_id, action):
     return redirect(url_for("staff_dashboard", service_id=service_id))
 
 
+@app.post("/staff/tickets/<int:ticket_id>/delete")
+def delete_ticket(ticket_id):
+    t = db.session.get(DatabaseTicket, ticket_id)
+    if t is None:
+        abort(404)
+
+    db.session.delete(t)
+    db.session.commit()
+    flash(f"Ticket #{ticket_id} was deleted.", "warning")
+    return redirect(url_for("staff_dashboard"))
+
+
+@app.get("/staff/services")
+def services_list():
+    return render_template("services.html", services=all_services())
+
+
+@app.post("/staff/services")
+def service_create():
+    name = request.form.get("name", "").strip()
+    completed_message = request.form.get("completed_message", "").strip()
+    minutes = request.form.get("avg_minutes", type=int)
+    if (
+        not name
+        or len(name) > 80
+        or not completed_message
+        or len(completed_message) > 250
+        or not minutes
+        or minutes <= 0
+    ):
+        flash(
+            "Enter a service name (up to 80 characters), completion message "
+            "(up to 250 characters), and positive average minutes.",
+            "danger",
+        )
+        return redirect(url_for("services_list"))
+
+    service = Service()
+    service.name = name
+    service.completed_message = completed_message
+    service.avg_minutes = minutes
+    db.session.add(service)
+    try:
+        db.session.commit()
+        flash(f"Service “{name}” added.", "success")
+    except IntegrityError:
+        db.session.rollback()
+        flash(f"A service named “{name}” already exists.", "danger")
+    return redirect(url_for("services_list"))
+
+
+@app.post("/staff/services/<int:service_id>/edit")
+def service_edit(service_id):
+    service = db.session.get(Service, service_id)
+    if service is None:
+        abort(404)
+
+    name = request.form.get("name", "").strip()
+    completed_message = request.form.get("completed_message", "").strip()
+    minutes = request.form.get("avg_minutes", type=int)
+    if (
+        not name
+        or len(name) > 80
+        or not completed_message
+        or len(completed_message) > 250
+        or not minutes
+        or minutes <= 0
+    ):
+        flash(
+            "Enter a service name (up to 80 characters), completion message "
+            "(up to 250 characters), and positive average minutes.",
+            "danger",
+        )
+        return redirect(url_for("services_list"))
+
+    service.name = name
+    service.completed_message = completed_message
+    service.avg_minutes = minutes
+    service.is_active = request.form.get("active") == "on"
+    try:
+        db.session.commit()
+        flash(f"Service “{name}” updated.", "success")
+    except IntegrityError:
+        db.session.rollback()
+        flash(f"A service named “{name}” already exists.", "danger")
+    return redirect(url_for("services_list"))
+
+
+@app.post("/staff/services/<int:service_id>/delete")
+def service_delete(service_id):
+    service = db.session.get(Service, service_id)
+    if service is None:
+        abort(404)
+    if service.tickets:
+        flash(
+            f"“{service.name}” has tickets, so it cannot be deleted. "
+            "Turn it off instead.",
+            "danger",
+        )
+        return redirect(url_for("services_list"))
+
+    name = service.name
+    db.session.delete(service)
+    try:
+        db.session.commit()
+        flash(f"Service “{name}” deleted.", "warning")
+    except IntegrityError:
+        db.session.rollback()
+        flash(
+            f"“{name}” now has tickets, so it could not be deleted. "
+            "Turn it off instead.",
+            "danger",
+        )
+    return redirect(url_for("services_list"))
+
+
 # Utils plz ----------------------------------------------------------------------------------
 PH_TIME = timezone(timedelta(hours=8))
 
@@ -313,9 +427,14 @@ def seed():
 
 
 def all_services():
-    return db.session.scalars(
+    return db.session.scalars(db.select(Service).order_by(Service.name)).all()
+
+
+def active_services():
+    statement = (
         db.select(Service).where(Service.is_active.is_(True)).order_by(Service.name)
-    ).all()
+    )
+    return db.session.scalars(statement).all()
 
 
 if __name__ == "__main__":

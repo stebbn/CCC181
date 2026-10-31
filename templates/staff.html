@@ -4,6 +4,7 @@
 
 {% block content %}
 <h1 class="h2 mb-4">Staff queue</h1>
+<p><a class="btn btn-outline-secondary" href="{{ url_for('services_list') }}">Manage services</a></p>
 
 <form method="get" action="{{ url_for('staff_dashboard') }}" class="row g-2 align-items-end mb-4">
   <div class="col-12 col-sm-6 col-md-4">
@@ -56,6 +57,11 @@
       <button type="submit" class="btn btn-success btn-lg">
         Mark as Done
       </button>
+    </form>
+    <form method="post"
+          action="{{ url_for('delete_ticket', ticket_id=current_ticket.id) }}"
+          data-confirm="Delete ticket {{ current_ticket.id }}? This cannot be undone.">
+      <button type="submit" class="btn btn-outline-danger">Delete ticket</button>
     </form>
 
   </div>
@@ -118,6 +124,11 @@
       </button>
     </form>
     {% endif %}
+    <form method="post"
+          action="{{ url_for('delete_ticket', ticket_id=ticket.id) }}"
+          data-confirm="Delete ticket {{ ticket.id }}? This cannot be undone.">
+      <button type="submit" class="btn btn-sm btn-outline-danger">Delete</button>
+    </form>
 
   </article>
   {% endif %}

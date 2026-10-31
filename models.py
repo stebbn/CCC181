@@ -42,11 +42,20 @@ class Service(db.Model):
     id: Mapped[int] = mapped_column(BigInteger, Identity(always=True), primary_key=True)
     name: Mapped[str] = mapped_column(String(80), unique=True)
     completed_message: Mapped[str] = mapped_column(String(250))
+    avg_minutes: Mapped[int] = mapped_column(
+        Integer,
+        default=10,
+        server_default="10",
+    )
     is_active: Mapped[bool] = mapped_column(
         Boolean, default=True, server_default=true()
     )
 
     tickets: Mapped[list["Ticket"]] = relationship(back_populates="service")
+
+    __table_args__ = (
+        CheckConstraint("avg_minutes > 0", name="ck_services_avg_minutes"),
+    )
 
 
 class Ticket(db.Model):
@@ -85,7 +94,6 @@ class Ticket(db.Model):
     items: Mapped[list["TicketItem"]] = relationship(
         back_populates="ticket",
         cascade="all, delete-orphan",
-        passive_deletes=True,
     )
 
     __table_args__ = (
