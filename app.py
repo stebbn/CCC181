@@ -1,13 +1,15 @@
 import os
+from datetime import datetime, timezone
 
 from dotenv import load_dotenv
-from static.queue_types import *
-from flask import Flask, abort, redirect, render_template, request, url_for, flash
+from flask import Flask, abort, flash, redirect, render_template, request, url_for
 from flask_migrate import Migrate
 from sqlalchemy import func
 from sqlalchemy.exc import IntegrityError
 
-from models import Service, Ticket as DatabaseTicket, TicketItem, db
+from models import Service, TicketItem, User, db
+from models import Ticket as DatabaseTicket
+from static.queue_types import *
 
 load_dotenv()
 
@@ -19,222 +21,308 @@ app.config["SQLALCHEMY_ECHO"] = os.environ.get("SQLALCHEMY_ECHO") == "1"
 db.init_app(app)
 migrate = Migrate(app, db)
 
-SERVICES: list[ServiceDict] = [
-    {
-        "id": 1,
-        "name": "To Check",
-        "info": {"completed": "Your items have been checked and are ready for the next action."},
-    },
-    {
-        "id": 2,
-        "name": "To Ship",
-        "info": {"completed": "Your items are ready to deliver."},
-    },
-]
-
-TICKETS: list[Ticket] = [
-    Ticket(number=1, name="Alex", service_id=1, items=[Item(name= "Ball", count=1, info="its a ball")], status="Waiting"),
-]
-
-def getQueuePlacement() -> int:
-    return TICKETS[-1].number if TICKETS else 0
-
-def getNextPlacement() -> int:
-    return getQueuePlacement() + 1
-
 @app.route("/")
 def index():
-    return render_template("index.html", name="", tickets=TICKETS)
+    tickets = db.session.scalars(
+        db.select(DatabaseTicket).order_by(DatabaseTicket.id.desc())
+    ).all()
+    return render_template("index.html", name="", tickets=tickets)
+
 
 @app.get("/queue/<int:ticket_id>")
 def ticket(ticket_id):
-    t = next((t for t in TICKETS if t.number == ticket_id), None)
+    t = db.session.get(DatabaseTicket, ticket_id)
     if t is None:
         abort(404)
-    ahead = [x for x in TICKETS
-             if x.service_id == t.service_id
-             and x.status == "Waiting"
-             and x.number < t.number]
-    service = next(s for s in SERVICES if s["id"] == t.service_id)
-    return render_template("ticket.html", ticket=t, service=service, ahead=len(ahead))
+    ahead = db.session.scalar(
+        db.select(func.count())
+        .select_from(DatabaseTicket)
+        .where(
+            DatabaseTicket.service_id == t.service_id,
+            DatabaseTicket.status == "Waiting",
+            DatabaseTicket.id < t.id,
+        )
+    )
+    return render_template(
+        "ticket.html",
+        ticket=t,
+        service=t.service,
+        ahead=ahead or 0,
+    )
+
 
 @app.post("/queue/<int:ticket_id>/leave")
 def leave_queue(ticket_id):
-    t = next((t for t in TICKETS if t.number == ticket_id), None)
+    t = db.session.get(DatabaseTicket, ticket_id)
     if t is None:
         abort(404)
-    t.status = "No-Show"
+    if t.status != "Waiting":
+        abort(409)
+    t.status = "Left"
+    t.left_at = datetime.now(timezone.utc)
+    db.session.commit()
     flash(f"Ticket #{ticket_id} has left the queue.", "success")
     return redirect(url_for("index"))
+
 
 @app.post("/join")
 def join():
     form = request.form
     name = form.get("name", "").strip()
+    email = form.get("email", "").strip().lower()
     service_id = form.get("service_id", type=int)
+    service: Service | None = (
+        db.session.get(Service, service_id) if service_id else None
+    )
 
     item_names = [item.strip() for item in form.getlist("items[]")]
     count_values = form.getlist("counts[]")
-    count_values = (count_values + [""] * len(item_names))[:len(item_names)]
-    item_counts = []
-
+    count_values = (count_values + [""] * len(item_names))[: len(item_names)]
+    item_quantities = []
     errors = {}
-    if not name:
-        errors["name"] = "Enter your name."
-    if service_id not in [s["id"] for s in SERVICES]:
-        errors["service_id"] = "Choose a service."
-    if not item_names or any(not item for item in item_names):
-        errors["items"] = "Enter a name for each item."
+
+    if not name or len(name) > 120:
+        errors["name"] = "Enter your name (up to 120 characters)."
+    if (
+        not email
+        or len(email) > 254
+        or "@" not in email
+        or email.startswith("@")
+        or email.endswith("@")
+    ):
+        errors["email"] = "Enter a valid email address."
+    if service is None or not service.is_active:
+        errors["service_id"] = "Choose an active service."
+    if not item_names or any(not item or len(item) > 120 for item in item_names):
+        errors["items"] = "Enter an item name of up to 120 characters for each item."
+
     for value in count_values:
         try:
-            count = int(value)
+            quantity = int(value)
         except ValueError:
-            count = 0
-        if count < 1:
-            errors["counts"] = "Enter a whole-number quantity of at least 1 for each item."
-        item_counts.append(count)
+            quantity = 0
+        if quantity < 1:
+            errors["counts"] = (
+                "Enter a whole-number quantity of at least 1 for each item."
+            )
+        item_quantities.append(quantity)
 
     if errors:
         flash("Please fix the highlighted fields.", "danger")
-        return render_template(
-            "join.html",
-            services=SERVICES,
-            form=form,
-            errors=errors,
-            item_values=item_names or [""],
-            count_values=count_values or ["1"],
-        ), 400
+        return (
+            render_template(
+                "join.html",
+                services=all_services(),
+                form=form,
+                errors=errors,
+                item_values=item_names or [""],
+                count_values=count_values or ["1"],
+            ),
+            400,
+        )
 
-    number = getNextPlacement()
-    TICKETS.append(Ticket(
-        number=number,
-        name=name,
-        service_id=service_id,
-        items=[
-            Item(name=item, count=count, info="")
-            for item, count in zip(item_names, item_counts)
-        ],
-        status="Waiting",
-    ))
+    if service is None:
+        abort(400)
 
-    print(TICKETS[number-1])
-    
-    flash(f"You joined the queue. Your ticket is #{number}.", "success")
-    return redirect(url_for("ticket", ticket_id=number))
+    user: User | None = db.session.scalar(db.select(User).filter_by(email=email))
+    if user is not None and (user.role != "driver" or not user.is_active):
+        errors["email"] = (
+            "That email is not available for an active driver account."
+        )
+        return (
+            render_template(
+                "join.html",
+                services=all_services(),
+                form=form,
+                errors=errors,
+                item_values=item_names or [""],
+                count_values=count_values or ["1"],
+            ),
+            400,
+        )
 
-@app.route("/hello")
-def hello():
-    return "Hello, CCC181!"
+    if user is None:
+        user = User()
+        user.name = name
+        user.email = email
+        user.role = "driver"
+        db.session.add(user)
+    else:
+        user.name = name
+
+    ticket_record: DatabaseTicket = DatabaseTicket()
+    ticket_record.driver = user
+    ticket_record.service = service
+    ticket_record.items = []
+    for item_name, quantity in zip(item_names, item_quantities):
+        ticket_item = TicketItem()
+        ticket_item.item_name = item_name
+        ticket_item.quantity = quantity
+        ticket_record.items.append(ticket_item)
+    db.session.add(ticket_record)
+    try:
+        db.session.commit()
+    except IntegrityError:
+        db.session.rollback()
+        app.logger.exception("Could not save a queue ticket")
+        flash("Something went wrong saving your ticket. Please try again.", "danger")
+        return (
+            render_template(
+                "join.html",
+                services=all_services(),
+                form=form,
+                errors={},
+                item_values=item_names or [""],
+                count_values=count_values or ["1"],
+            ),
+            409,
+        )
+
+    flash(f"You joined the queue. Your ticket is #{ticket_record.id}.", "success")
+    return redirect(url_for("ticket", ticket_id=ticket_record.id))
+
 
 @app.get("/join")
 def join_form():
     return render_template(
         "join.html",
-        services=SERVICES,
+        services=all_services(),
         form={},
         item_values=[""],
         count_values=["1"],
     )
 
+
+@app.get("/queue/<int:ticket_id>/status.json")
+def ticket_status(ticket_id):
+    t = db.session.get(DatabaseTicket, ticket_id)
+    if t is None:
+        abort(404)
+    ahead = db.session.scalar(
+        db.select(func.count())
+        .select_from(DatabaseTicket)
+        .where(
+            DatabaseTicket.service_id == t.service_id,
+            DatabaseTicket.status == "Waiting",
+            DatabaseTicket.id < t.id,
+        )
+    )
+
+    return {
+        "status": t.status,
+        "ahead": ahead or 0,
+        "completion_message": t.service.completed_message,
+    }
+
+
+# Staff ----------------------------------------------------------------------------------------
+
+
 @app.get("/staff")
 def staff_dashboard():
     service_id = request.args.get("service_id", type=int)
-    queue = [t for t in TICKETS if t.status in ("Waiting", "Processing")]
-
+    statement = db.select(DatabaseTicket).where(
+        DatabaseTicket.status.in_(("Waiting", "Processing"))
+    )
     if service_id is not None:
-        queue = [t for t in queue if t.service_id == service_id]
-    queue.sort(key=lambda ticket: ticket.number)
+        statement = statement.where(DatabaseTicket.service_id == service_id)
+    queue = db.session.scalars(statement.order_by(DatabaseTicket.id)).all()
     waiting_count = sum(ticket.status == "Waiting" for ticket in queue)
     current_ticket = next(
         (ticket for ticket in queue if ticket.status == "Processing"),
         None,
     )
 
-    names = {s["id"]: s["name"] for s in SERVICES}
-    waiting_counts = {
-        service["id"]: sum(
-            ticket.service_id == service["id"] and ticket.status == "Waiting"
-            for ticket in TICKETS
-        )
-        for service in SERVICES
-    }
-    return render_template("staff.html", queue=queue, services=SERVICES,
-                           names=names, selected=service_id,
-                           waiting_counts=waiting_counts,
-                           waiting_count=waiting_count,
-                           current_ticket=current_ticket)
+    return render_template(
+        "staff.html",
+        queue=queue,
+        services=db.session.scalars(
+            db.select(Service).order_by(Service.name)
+        ).all(),
+        selected=service_id,
+        waiting_count=waiting_count,
+        current_ticket=current_ticket,
+    )
 
 
 @app.post("/staff/call-next")
 def staff_call_next():
     service_id = request.form.get("service_id", type=int)
-    waiting = [
-        ticket for ticket in TICKETS
-        if ticket.status == "Waiting"
-        and (service_id is None or ticket.service_id == service_id)
-    ]
-    next_ticket = min(waiting, key=lambda ticket: ticket.number, default=None)
+    statement = db.select(DatabaseTicket).where(
+        DatabaseTicket.status == "Waiting"
+    )
+    if service_id is not None:
+        statement = statement.where(DatabaseTicket.service_id == service_id)
+    next_ticket = db.session.scalar(
+        statement.order_by(DatabaseTicket.id)
+        .with_for_update(skip_locked=True)
+        .limit(1)
+    )
 
     if next_ticket is None:
         flash("There are no waiting tickets for this service.", "warning")
     else:
         next_ticket.status = "Processing"
-        flash(f"Ticket #{next_ticket.number} has been called.", "success")
+        next_ticket.called_at = datetime.now(timezone.utc)
+        db.session.commit()
+        flash(f"Ticket #{next_ticket.id} has been called.", "success")
 
     return redirect(url_for("staff_dashboard", service_id=service_id))
 
-staff_status_call: dict[Literal["call", "serve", "no-show"], status_types] = {
-    "call": "Processing",
-    "serve": "Completed",
-    "no-show": "No-Show",
-}
 
 @app.post("/staff/tickets/<int:ticket_id>/<action>")
 def staff_action(ticket_id, action):
-    new_status = staff_status_call.get(action)
-    t = next((t for t in TICKETS if t.number == ticket_id), None)
-
-    if t is None or new_status is None:
+    t = db.session.get(DatabaseTicket, ticket_id)
+    if t is None:
         abort(404)
 
-    t.status = new_status
+    now = datetime.now(timezone.utc)
+    if action == "serve" and t.status == "Processing":
+        t.status = "Completed"
+        t.completed_at = now
+    elif action == "no-show" and t.status == "Waiting":
+        t.status = "No-Show"
+        t.no_show_at = now
+    else:
+        abort(404)
 
-    flash(f"Ticket #{ticket_id} marked {new_status}.", "info")
+    db.session.commit()
+    flash(f"Ticket #{ticket_id} marked {t.status}.", "info")
     service_id = request.form.get("service_id", type=int)
     return redirect(url_for("staff_dashboard", service_id=service_id))
 
-@app.get("/queue/<int:ticket_id>/status.json")
-def ticket_status(ticket_id):
-    t = next((t for t in TICKETS if t.number == ticket_id), None)
-    if t is None:
-        abort(404)
-    service = next(s for s in SERVICES if s["id"] == t.service_id)
-    ahead = sum(1 for x in TICKETS
-                if x.service_id == t.service_id
-                and x.status == "Waiting" and x.number < t.number)
-    
-    return {
-        "status": t.status,
-        "ahead": ahead,
-        "completion_message": service["info"]["completed"],
-    }
+
+# Utils plz ----------------------------------------------------------------------------------
+
 
 @app.cli.command("seed")
 def seed():
     """Add the starting services if they are not there yet."""
 
-    for service in SERVICES:
-        name = service["name"]
+    for name, completed_message in (
+        (
+            "To Check",
+            "Your items have been checked and are ready for the next action.",
+        ),
+        ("To Ship", "Your items are ready to deliver."),
+    ):
         exists = db.session.scalar(db.select(Service).filter_by(name=name))
 
         if exists is None:
             new_service = Service()
             new_service.name = name
-            new_service.completed_message = service["info"]["completed"]
+            new_service.completed_message = completed_message
             db.session.add(new_service)
 
     db.session.commit()
     print("Services are ready.")
+
+
+def all_services():
+    return db.session.scalars(
+        db.select(Service).where(Service.is_active.is_(True)).order_by(Service.name)
+    ).all()
+
 
 if __name__ == "__main__":
     app.run(debug=True)

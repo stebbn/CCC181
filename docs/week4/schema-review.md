@@ -25,11 +25,16 @@ The schema was set aside for at least an hour before this review. I checked it a
 ### Foreign-key deletion behavior
 
 **Works well:** Deleting a service with ticket history is restricted, and deleting a ticket cascades only to its dependent item lines. This preserves service and ticket history while preventing orphan item rows.
-<br>**Problem:** No additional delete issue was found in the current three-table design.
-<br>**Change:** Kept `ON DELETE RESTRICT` for `tickets.service_id` and `ON DELETE CASCADE` for `ticket_items.ticket_id`, with the reasons documented in `schema.md`.
+<br>**Problem:** The original three-table design had no persistent driver identity to protect from accidental deletion.
+<br>**Change:** Kept `ON DELETE RESTRICT` for `tickets.service_id` and `tickets.driver_id`, and `ON DELETE CASCADE` for `ticket_items.ticket_id`, with the reasons documented in `schema.md`.
+
+### Driver and staff profiles
+
+**Problem:** Driver and staff identities were not stored, so a ticket could only retain a free-form driver name and the schema could not distinguish staff from drivers.
+<br>**Change:** Added `users` with a role check (`driver` or `staff`), optional unique email, and active flag. `tickets.driver_id` references the submitting driver and restricts deleting users with ticket history. Staff action auditing remains out of scope.
 
 ## Other checks
 
 - Queue position and no-show totals are computed instead of being stored.
-- Primary keys prevent duplicate IDs, foreign keys reject missing services or tickets, status and quantity checks reject invalid values. The app must still validate that a selected service is active and is the service the driver intended.
-- Names for services are stored once, ticket item rows contain one item and quantity, and there is no composite-key join table in this design.
+- Primary keys prevent duplicate IDs, foreign keys reject missing users, services, or tickets, and role, status, and quantity checks reject invalid values. The app must still validate that a ticket's user has the `driver` role and is active, and that its selected service is active.
+- Names for services and users are stored once, ticket item rows contain one item and quantity, and there is no composite-key join table in this design.

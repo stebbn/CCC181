@@ -19,6 +19,17 @@
       </div>
 
       <div class="mb-3">
+        <label for="email" class="form-label">Email</label>
+        <input id="email" name="email" type="email" autocomplete="email" required
+               class="form-control {% if errors and errors.email %}is-invalid{% endif %}"
+               value="{{ form.get('email', '') }}"
+               {% if errors and errors.email %}aria-describedby="email-error"{% endif %}>
+        {% if errors and errors.email %}
+          <div id="email-error" class="invalid-feedback">{{ errors.email }}</div>
+        {% endif %}
+      </div>
+
+      <div class="mb-3">
         <label for="service_id" class="form-label">Service</label>
         <select id="service_id" name="service_id" required
                 class="form-select {% if errors and errors.service_id %}is-invalid{% endif %}">
