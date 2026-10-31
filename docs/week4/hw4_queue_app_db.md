@@ -500,7 +500,9 @@ class User(db.Model):
     id: Mapped[int] = mapped_column(primary_key=True)
     name: Mapped[str] = mapped_column(String(80))
     email: Mapped[str] = mapped_column(String(120), unique=True)
-    role: Mapped[str] = mapped_column(String(20), default="visitor", server_default="visitor")
+    role: Mapped[str] = mapped_column(
+        String(20), default="visitor", server_default="visitor"
+    )
 
     tickets: Mapped[list["Ticket"]] = relationship(back_populates="user")
 
@@ -527,11 +529,17 @@ class Ticket(db.Model):
     __tablename__ = "tickets"
 
     id: Mapped[int] = mapped_column(primary_key=True)
-    status: Mapped[str] = mapped_column(String(20), default="waiting", server_default="waiting")
-    created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), server_default=func.now())
+    status: Mapped[str] = mapped_column(
+        String(20), default="waiting", server_default="waiting"
+    )
+    created_at: Mapped[datetime] = mapped_column(
+        DateTime(timezone=True), server_default=func.now()
+    )
     called_at: Mapped[datetime | None] = mapped_column(DateTime(timezone=True))
     user_id: Mapped[int] = mapped_column(ForeignKey("users.id", ondelete="RESTRICT"))
-    service_id: Mapped[int] = mapped_column(ForeignKey("services.id", ondelete="RESTRICT"))
+    service_id: Mapped[int] = mapped_column(
+        ForeignKey("services.id", ondelete="RESTRICT")
+    )
 
     user: Mapped["User"] = relationship(back_populates="tickets")
     service: Mapped["Service"] = relationship(back_populates="tickets")
@@ -694,8 +702,9 @@ def join():
 
     if errors:
         flash("Please fix the highlighted fields.", "danger")
-        return render_template("join.html", services=all_services(),
-                               form=form, errors=errors), 400
+        return render_template(
+            "join.html", services=all_services(), form=form, errors=errors
+        ), 400
 
     user = db.session.scalar(db.select(User).filter_by(email=email))
     if user is None:
@@ -707,8 +716,9 @@ def join():
     except IntegrityError:
         db.session.rollback()
         flash("Something went wrong saving your ticket. Please try again.", "danger")
-        return render_template("join.html", services=all_services(),
-                               form=form, errors={}), 409
+        return render_template(
+            "join.html", services=all_services(), form=form, errors={}
+        ), 409
 
     flash(f"You joined the queue. Your ticket is #{ticket.id}.", "success")
     return redirect(url_for("ticket", ticket_id=ticket.id))
@@ -730,11 +740,11 @@ The `try/except IntegrityError` is the database saying no. If two requests with 
 
 **Checkpoint 7**
 
-- [ ] The `SERVICES` and `TICKETS` lists are gone from `app.py`.
-- [ ] Joining creates a row in `tickets`, shown by `SELECT * FROM tickets;` in psql.
-- [ ] Joining twice with the same email (try different capital letters) creates two tickets but only one row in `users`.
-- [ ] An empty or invalid form still shows the Week 3 error messages and saves nothing.
-- [ ] Committed.
+- [X] The `SERVICES` and `TICKETS` lists are gone from `app.py`.
+- [X] Joining creates a row in `tickets`, shown by `SELECT * FROM tickets;` in psql.
+- [X] Joining twice with the same email (try different capital letters) creates two tickets but only one row in `users`.
+- [X] An empty or invalid form still shows the Week 3 error messages and saves nothing.
+- [X] Committed.
 
 ---
 
@@ -749,11 +759,15 @@ Add this helper. It counts the tickets that are still waiting for the same servi
 ```python
 def people_ahead(t):
     """Count tickets still waiting for the same service that joined before t."""
-    stmt = (db.select(func.count())
-            .select_from(Ticket)
-            .where(Ticket.service_id == t.service_id,
-                   Ticket.status == "waiting",
-                   Ticket.created_at < t.created_at))
+    stmt = (
+        db.select(func.count())
+        .select_from(Ticket)
+        .where(
+            Ticket.service_id == t.service_id,
+            Ticket.status == "waiting",
+            Ticket.created_at < t.created_at,
+        )
+    )
     return db.session.scalar(stmt)
 ```
 
@@ -765,8 +779,9 @@ Replace your Week 3 `ticket` and `ticket_status` routes:
 @app.get("/queue/<int:ticket_id>")
 def ticket(ticket_id):
     t = db.get_or_404(Ticket, ticket_id)
-    return render_template("ticket.html", ticket=t, service=t.service,
-                           ahead=people_ahead(t))
+    return render_template(
+        "ticket.html", ticket=t, service=t.service, ahead=people_ahead(t)
+    )
 
 
 @app.get("/queue/<int:ticket_id>/status.json")
@@ -803,14 +818,17 @@ Replace your Week 3 `staff_dashboard` route:
 @app.get("/staff")
 def staff_dashboard():
     service_id = request.args.get("service_id", type=int)
-    stmt = (db.select(Ticket)
-            .where(Ticket.status.in_(["waiting", "called"]))
-            .order_by(Ticket.created_at))
+    stmt = (
+        db.select(Ticket)
+        .where(Ticket.status.in_(["waiting", "called"]))
+        .order_by(Ticket.created_at)
+    )
     if service_id:
         stmt = stmt.where(Ticket.service_id == service_id)
     queue = db.session.scalars(stmt).all()
-    return render_template("staff.html", queue=queue, services=all_services(),
-                           selected=service_id)
+    return render_template(
+        "staff.html", queue=queue, services=all_services(), selected=service_id
+    )
 ```
 
 `db.select(...)` only builds the query; `db.session.scalars(stmt).all()` runs it and returns a list of `Ticket` objects. In `staff.html`, replace the Week 3 lookups with the relationships: `{{ t.user.name }}` instead of `{{ t.name }}`, and `{{ t.service.name }}` instead of `{{ names[t.service_id] }}`. Add a **Joined** column with `{{ t.created_at|local }}`.
@@ -819,11 +837,11 @@ Do not use the old `Ticket.query` style you may find online. It is legacy in SQL
 
 **Checkpoint 8**
 
-- [ ] My place shows the number, service, status, position and the time joined, read from the database.
-- [ ] `/queue/99999` shows a 404 page, not a server error.
-- [ ] The staff dashboard lists waiting and called tickets in the order they joined, filters by service, and shows each person's name through `t.user.name`.
-- [ ] No `position` column exists anywhere in your schema.
-- [ ] Committed.
+- [X] My place shows the number, service, status, position and the time joined, read from the database.
+- [X] `/queue/99999` shows a 404 page, not a server error.
+- [X] The staff dashboard lists waiting and called tickets in the order they joined, filters by service, and shows each person's name through `t.user.name`.
+- [X] No `position` column exists anywhere in your schema.
+- [X] Committed.
 
 ---
 
@@ -931,7 +949,9 @@ Your setting will change after launch: a service stops for the semester, or a ne
        name = request.form.get("name", "").strip()
        minutes = request.form.get("avg_minutes", type=int)
        if not name or len(name) > 60 or not minutes or minutes <= 0:
-           flash("Enter a name (up to 60 characters) and minutes greater than 0.", "danger")
+           flash(
+               "Enter a name (up to 60 characters) and minutes greater than 0.", "danger"
+           )
            return redirect(url_for("services_list"))
        db.session.add(Service(name=name, avg_minutes=minutes))
        try:
@@ -947,7 +967,10 @@ Your setting will change after launch: a service stops for the semester, or a ne
    def service_delete(service_id):
        s = db.get_or_404(Service, service_id)
        if s.tickets:
-           flash(f"“{s.name}” has tickets, so it cannot be deleted. Turn it off instead.", "danger")
+           flash(
+               f"“{s.name}” has tickets, so it cannot be deleted. Turn it off instead.",
+               "danger",
+           )
            return redirect(url_for("services_list"))
        db.session.delete(s)
        db.session.commit()

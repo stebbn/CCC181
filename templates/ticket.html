@@ -9,6 +9,7 @@
           <h1 class="h3 mb-4" id="ticket-heading">My place in the queue</h1>
           <p class="text-body-secondary mb-1">{{ service.name }}</p>
           <p class="ticket-number fw-bold mb-4">#{{ ticket.id }}</p>
+          <p class="text-body-secondary">Joined {{ ticket.created_at|local }}</p>
 
           <div id="live-status" aria-live="polite">
             {% if ticket.status == "Waiting" %}

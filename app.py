@@ -1,5 +1,5 @@
 import os
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 from dotenv import load_dotenv
 from flask import Flask, abort, flash, redirect, render_template, request, url_for
@@ -21,6 +21,7 @@ app.config["SQLALCHEMY_ECHO"] = os.environ.get("SQLALCHEMY_ECHO") == "1"
 db.init_app(app)
 migrate = Migrate(app, db)
 
+
 @app.route("/")
 def index():
     tickets = db.session.scalars(
@@ -34,20 +35,11 @@ def ticket(ticket_id):
     t = db.session.get(DatabaseTicket, ticket_id)
     if t is None:
         abort(404)
-    ahead = db.session.scalar(
-        db.select(func.count())
-        .select_from(DatabaseTicket)
-        .where(
-            DatabaseTicket.service_id == t.service_id,
-            DatabaseTicket.status == "Waiting",
-            DatabaseTicket.id < t.id,
-        )
-    )
     return render_template(
         "ticket.html",
         ticket=t,
         service=t.service,
-        ahead=ahead or 0,
+        ahead=people_ahead(t),
     )
 
 
@@ -126,9 +118,7 @@ def join():
 
     user: User | None = db.session.scalar(db.select(User).filter_by(email=email))
     if user is not None and (user.role != "driver" or not user.is_active):
-        errors["email"] = (
-            "That email is not available for an active driver account."
-        )
+        errors["email"] = "That email is not available for an active driver account."
         return (
             render_template(
                 "join.html",
@@ -198,19 +188,10 @@ def ticket_status(ticket_id):
     t = db.session.get(DatabaseTicket, ticket_id)
     if t is None:
         abort(404)
-    ahead = db.session.scalar(
-        db.select(func.count())
-        .select_from(DatabaseTicket)
-        .where(
-            DatabaseTicket.service_id == t.service_id,
-            DatabaseTicket.status == "Waiting",
-            DatabaseTicket.id < t.id,
-        )
-    )
 
     return {
         "status": t.status,
-        "ahead": ahead or 0,
+        "ahead": people_ahead(t),
         "completion_message": t.service.completed_message,
     }
 
@@ -236,9 +217,7 @@ def staff_dashboard():
     return render_template(
         "staff.html",
         queue=queue,
-        services=db.session.scalars(
-            db.select(Service).order_by(Service.name)
-        ).all(),
+        services=db.session.scalars(db.select(Service).order_by(Service.name)).all(),
         selected=service_id,
         waiting_count=waiting_count,
         current_ticket=current_ticket,
@@ -248,15 +227,11 @@ def staff_dashboard():
 @app.post("/staff/call-next")
 def staff_call_next():
     service_id = request.form.get("service_id", type=int)
-    statement = db.select(DatabaseTicket).where(
-        DatabaseTicket.status == "Waiting"
-    )
+    statement = db.select(DatabaseTicket).where(DatabaseTicket.status == "Waiting")
     if service_id is not None:
         statement = statement.where(DatabaseTicket.service_id == service_id)
     next_ticket = db.session.scalar(
-        statement.order_by(DatabaseTicket.id)
-        .with_for_update(skip_locked=True)
-        .limit(1)
+        statement.order_by(DatabaseTicket.id).with_for_update(skip_locked=True).limit(1)
     )
 
     if next_ticket is None:
@@ -293,6 +268,25 @@ def staff_action(ticket_id, action):
 
 
 # Utils plz ----------------------------------------------------------------------------------
+PH_TIME = timezone(timedelta(hours=8))
+
+
+@app.template_filter("local")
+def local_time(value: datetime | None) -> str:
+    return value.astimezone(PH_TIME).strftime("%b %d, %I:%M %p") if value else ""
+
+
+def people_ahead(ticket_record: DatabaseTicket) -> int:
+    statement = (
+        db.select(func.count())
+        .select_from(DatabaseTicket)
+        .where(
+            DatabaseTicket.service_id == ticket_record.service_id,
+            DatabaseTicket.status == "Waiting",
+            DatabaseTicket.id < ticket_record.id,
+        )
+    )
+    return db.session.scalar(statement) or 0
 
 
 @app.cli.command("seed")

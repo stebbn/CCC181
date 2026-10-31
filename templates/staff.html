@@ -23,8 +23,7 @@
 </form>
 
 {% if current_ticket %}
-https://www.youtube.com/watch?v=JdpS6LDhD0Q&t=3s {% set current_item_total = current_ticket.items|default([],
-true)|sum(attribute="quantity") %}
+{% set current_item_total = current_ticket.items|default([], true)|sum(attribute="quantity") %}
 <section class="staff-current mb-4" aria-labelledby="now-serving-heading">
 
   <h2 id="now-serving-heading" class="staff-current-label">Now Serving</h2>
@@ -34,6 +33,7 @@ true)|sum(attribute="quantity") %}
     <span class="staff-ticket-number">#{{ current_ticket.id }}</span>
     <span class="staff-ticket-name">{{ current_ticket.driver.name }}</span>
   </div>
+  <p class="text-body-secondary">Joined {{ current_ticket.created_at|local }}</p>
 
   <div class="staff-current-actions">
     <details class="staff-items">
@@ -91,6 +91,7 @@ true)|sum(attribute="quantity") %}
       </div>
 
       <span class="staff-ticket-service">{{ ticket.service.name }}</span>
+      <p class="text-body-secondary mb-2">Joined {{ ticket.created_at|local }}</p>
 
       <details class="staff-items">
         <summary>View items ({{ item_total }})</summary>
