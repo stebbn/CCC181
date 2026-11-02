@@ -1074,12 +1074,12 @@ Include at least **three Flask rows** and **one row for every constraint type** 
 
 **Checkpoint 10**
 
-- [ ] Form attributes match the column lengths and NOT NULL rules.
-- [ ] curl requests that skip the form return 400 and save nothing.
-- [ ] Every bad insert in psql fails, one for each constraint type in your schema.
-- [ ] The `git grep` check prints nothing.
-- [ ] `docs/week4/validation.md` has the results table.
-- [ ] Committed.
+- [X] Form attributes match the column lengths and NOT NULL rules.
+- [X] curl requests that skip the form return 400 and save nothing.
+- [X] Every bad insert in psql fails, one for each constraint type in your schema.
+- [X] The `git grep` check prints nothing.
+- [X] `docs/week4/validation.md` has the results table.
+- [X] Committed.
 
 ---
 

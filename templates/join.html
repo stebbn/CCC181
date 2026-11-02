@@ -9,7 +9,8 @@
     <form method="post" action="{{ url_for('join') }}" id="join-form">
       <div class="mb-3">
         <label for="name" class="form-label">Your name</label>
-        <input id="name" name="name" type="text" autocomplete="name" required
+        <input id="name" name="name" type="text" autocomplete="name"
+               maxlength="120" required
                class="form-control {% if errors and errors.name %}is-invalid{% endif %}"
                value="{{ form.get('name', '') }}"
                {% if errors and errors.name %}aria-describedby="name-error"{% endif %}>
@@ -20,7 +21,8 @@
 
       <div class="mb-3">
         <label for="email" class="form-label">Email</label>
-        <input id="email" name="email" type="email" autocomplete="email" required
+        <input id="email" name="email" type="email" autocomplete="email"
+               maxlength="254" required
                class="form-control {% if errors and errors.email %}is-invalid{% endif %}"
                value="{{ form.get('email', '') }}"
                {% if errors and errors.email %}aria-describedby="email-error"{% endif %}>
@@ -49,7 +51,8 @@
         <div id="items-container">
           {% for item in item_values %}
             <div class="item-row d-flex gap-2 mb-2">
-              <input type="text" name="items[]" placeholder="Item {{ loop.index }}" required
+              <input type="text" name="items[]" placeholder="Item {{ loop.index }}"
+                     maxlength="120" required
                      aria-label="Item {{ loop.index }}"
                      class="form-control {% if errors and errors['items'] %}is-invalid{% endif %}"
                      value="{{ item }}">
@@ -109,6 +112,7 @@
     const input = document.createElement("input");
     input.type = "text";
     input.name = "items[]";
+    input.maxLength = 120;
     input.required = true;
     input.className = "form-control";
 

@@ -1,4 +1,5 @@
 import os
+import re
 from datetime import datetime, timedelta, timezone
 
 from dotenv import load_dotenv
@@ -78,9 +79,7 @@ def join():
     if (
         not email
         or len(email) > 254
-        or "@" not in email
-        or email.startswith("@")
-        or email.endswith("@")
+        or re.fullmatch(r"[^@\s]+@[^@\s]+\.[^@\s]+", email) is None
     ):
         errors["email"] = "Enter a valid email address."
     if service is None or not service.is_active:
