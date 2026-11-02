@@ -16,13 +16,13 @@
 | REQ-S01 | A warehouse staff member can view waiting tickets in ticket-number order on the staff dashboard. | Must | **Yes** | Built (Week 3) |
 | REQ-S02 ★ | A warehouse staff member can identify whether each ticket is for **To Check** or **To Ship** from its service label. | Must | **Yes** | Built (Week 3) |
 | REQ-S03 | A warehouse staff member can call the next waiting ticket and update its status to Completed or No-Show from the dashboard. | Must | **Yes** | Built (Week 3) |
-| REQ-S04 | WarehouseQ can save services, tickets, item names, quantities, and statuses so the queue is still available after the server restarts. | Must | **Yes** | This week |
+| REQ-S04 | WarehouseQ can save services, tickets, item names, quantities, and statuses so the queue is still available after the server restarts. | Must | **Yes** | Built (Week 4) |
 | REQ-C04 | A driver can review the item names and quantities on their ticket after joining the queue. | Should | **Yes** | Later |
 | REQ-C05 ★ | A driver can mark a request as time-sensitive so staff can identify it on the dashboard and prioritize it within its service. | Could | **Yes** | Later |
-| REQ-S05 | A warehouse staff member can add a service, rename it, or switch it off so drivers cannot select it for new tickets. | Should | **Yes** | Later |
+| REQ-S05 | A warehouse staff member can add a service, rename it, or switch it off so drivers cannot select it for new tickets. | Should | **Yes** | Built (Week 4) |
 | REQ-S06 | A warehouse staff member can see the number of No-Show tickets for each service on a selected day. | Should | **Yes** | Later |
 
-The six requirements already used in the personas keep their original IDs. New customer requirements continue as REQ-C04, REQ-C05, and so on; new staff requirements continue as REQ-S04, REQ-S05, and so on. IDs are not reused or renumbered. Database persistence is planned for this week; the other new features are future work.
+The six requirements already used in the personas keep their original IDs. New customer requirements continue as REQ-C04, REQ-C05, and so on; new staff requirements continue as REQ-S04, REQ-S05, and so on. IDs are not reused or renumbered. Database persistence (REQ-S04) and service management (REQ-S05) are built in Week 4. REQ-C04, REQ-C05, and REQ-S06 remain future work.
 
 ## 1c. Non-functional requirements
 

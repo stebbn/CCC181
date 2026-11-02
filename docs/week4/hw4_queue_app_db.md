@@ -1161,11 +1161,11 @@ Commit it: `git commit -m "Add Week 4 report (#<issue>)"`. Then open your branch
 
 **Checkpoint 11 (submission)**
 
-- [ ] `docs/week4/persistence.md` shows the restart test and the rebuild from scratch.
-- [ ] Every requirement marked *This week* in `docs/requirements.md` works, and its status is updated to *Built (Week 4)*.
-- [ ] `docs/week4/report.md` is in your repository and displays correctly on GitHub.
+- [X] `docs/week4/persistence.md` shows the restart test and the rebuild from scratch.
+- [X] Every requirement marked *This week* in `docs/requirements.md` works, and its status is updated to *Built (Week 4)*.
+- [X] `docs/week4/report.md` is in your repository and displays correctly on GitHub.
 - [ ] Your pull request is **merged** into `main` and tagged `week4`.
-- [ ] Your repository is public, and the report link opens in a private browser window.
+- [X] Your repository is public, and the report link opens in a private browser window.
 - [ ] The link to your report at the `week4` tag is submitted to the **Week 4 assignment on MOLE** before the due date.
 
 ---
@@ -1259,15 +1259,15 @@ This is **individual work**. You may discuss ideas with classmates, but your req
 
 ## Checklist before you submit
 
-- [ ] `docs/requirements.md` has my requirements with IDs, priorities and the *Stores data?* column, checked with one person from my setting.
-- [ ] `docs/week4/schema.md` and my ERD show at least three related tables for my own setting, with every key and constraint.
-- [ ] `schema-review.md` has my self-review, and my ERD is updated.
-- [ ] `docker compose up -d` starts PostgreSQL 17, and my password is only in `.env`, which Git ignores.
-- [ ] `models.py` matches my ERD, and both migrations are committed.
-- [ ] No `TICKETS` or `SERVICES` list is left; every screen reads and writes PostgreSQL.
-- [ ] Create, read, update, soft delete and hard delete all work, and every change is a POST.
-- [ ] `validation.md` shows bad data stopped by Flask (curl) and by the database (psql).
-- [ ] `persistence.md` shows my data surviving a restart, and the database rebuilding from my migrations.
+- [X] `docs/requirements.md` has my requirements with IDs, priorities and the *Stores data?* column, checked with one person from my setting.
+- [X] `docs/week4/schema.md` and my ERD show at least three related tables for my own setting, with every key and constraint.
+- [X] `schema-review.md` has my self-review, and my ERD is updated.
+- [X] `docker compose up -d` starts PostgreSQL 17, and my password is only in `.env`, which Git ignores.
+- [X] `models.py` matches my ERD, and both migrations are committed.
+- [X] No `TICKETS` or `SERVICES` list is left; every screen reads and writes PostgreSQL.
+- [X] Create, read, update, soft delete and hard delete all work, and every change is a POST.
+- [X] `validation.md` shows bad data stopped by Flask (curl) and by the database (psql).
+- [X] `persistence.md` shows my data surviving a restart, and the database rebuilding from my migrations.
 - [ ] My pull request is merged into `main` and tagged `week4`.
-- [ ] `docs/week4/report.md` is in my repository with my PR link at the top, and I submitted its `week4` link on MOLE.
-- [ ] I can explain every table, constraint and route in my submission, in case I am asked for a spot-check demonstration.
+- [X] `docs/week4/report.md` is in my repository with my PR link at the top, and I submitted its `week4` link on MOLE.
+- [X] I can explain every table, constraint and route in my submission, in case I am asked for a spot-check demonstration.

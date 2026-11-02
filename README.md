@@ -4,14 +4,28 @@ WarehouseQ is a Flask queue for warehouse item checking and shipment processing.
 
 Project requirements are documented in [docs/requirements.md](docs/requirements.md).
 
-## Run locally
+## Run locally with Docker
 
-From the project root, create and activate a virtual environment, install the dependencies, and start Flask:
+From the project root, copy the example environment file. If you change the
+example password, use the same password in both environment variables:
+
+```powershell
+Copy-Item .env.example .env
+# Edit .env and set a private password for local development.
+docker compose up -d
+docker compose ps
+```
+
+Wait until the database reports **healthy**. Then create the virtual environment,
+install the dependencies, apply the migrations, seed the starting services, and
+start Flask:
 
 ```powershell
 python -m venv .venv
 .\.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
+flask --app app db upgrade
+flask --app app seed
 flask --app app run --debug
 ```
 
