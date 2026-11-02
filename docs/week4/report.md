@@ -5,11 +5,11 @@
 - **Application:** WarehouseQ
 - **Setting:** Warehouse receiving and loading bay during weekday business hours
 - **Full name:** Steve Nash H. Llamedo
-- **Student ID:** [Fill in your student ID]
+- **Student ID:** 2024-1070
 - **Section:** CS3A
 - **Date:** 2 November 2026
 - **Branch:** `feature/week4-database`
-- **Pull request:** `updoot`
+- **Pull request:** [`Link`](https://github.com/stebbn/CCC181/pull/6)
 - **Database:** PostgreSQL in Docker Compose
 
 ## Requirements

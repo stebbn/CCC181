@@ -1164,9 +1164,9 @@ Commit it: `git commit -m "Add Week 4 report (#<issue>)"`. Then open your branch
 - [X] `docs/week4/persistence.md` shows the restart test and the rebuild from scratch.
 - [X] Every requirement marked *This week* in `docs/requirements.md` works, and its status is updated to *Built (Week 4)*.
 - [X] `docs/week4/report.md` is in your repository and displays correctly on GitHub.
-- [ ] Your pull request is **merged** into `main` and tagged `week4`.
+- [X] Your pull request is **merged** into `main` and tagged `week4`.
 - [X] Your repository is public, and the report link opens in a private browser window.
-- [ ] The link to your report at the `week4` tag is submitted to the **Week 4 assignment on MOLE** before the due date.
+- [X] The link to your report at the `week4` tag is submitted to the **Week 4 assignment on MOLE** before the due date.
 
 ---
 
@@ -1268,6 +1268,6 @@ This is **individual work**. You may discuss ideas with classmates, but your req
 - [X] Create, read, update, soft delete and hard delete all work, and every change is a POST.
 - [X] `validation.md` shows bad data stopped by Flask (curl) and by the database (psql).
 - [X] `persistence.md` shows my data surviving a restart, and the database rebuilding from my migrations.
-- [ ] My pull request is merged into `main` and tagged `week4`.
+- [X] My pull request is merged into `main` and tagged `week4`.
 - [X] `docs/week4/report.md` is in my repository with my PR link at the top, and I submitted its `week4` link on MOLE.
 - [X] I can explain every table, constraint and route in my submission, in case I am asked for a spot-check demonstration.
