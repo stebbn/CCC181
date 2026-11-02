@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}Manage services · WarehouseQ{% endblock %}
+
+{% block content %}
+<h1 class="h2 mb-4">Manage services</h1>
+<p>
+  <a class="btn btn-outline-secondary d-inline-flex align-items-center gap-2"
+    href="{{ url_for('staff_dashboard') }}">
+    <img src="{{ url_for('static', filename='icons/arrow-left.svg') }}" alt="" aria-hidden="true"
+      width="25" height="25">
+    Back to staff
+  </a>
+</p>
+
+<section class="card mb-4" aria-labelledby="create-service-heading">
+  <div class="card-body">
+    <h2 class="h4" id="create-service-heading">Add a service</h2>
+    <form method="post" action="{{ url_for('service_create') }}">
+      <div class="mb-3">
+        <label class="form-label" for="new-name">Name</label>
+        <input class="form-control" id="new-name" name="name" maxlength="80" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="new-completed-message">Completion message</label>
+        <input class="form-control" id="new-completed-message" name="completed_message" maxlength="250" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="new-avg-minutes">Average minutes</label>
+        <input class="form-control" id="new-avg-minutes" name="avg_minutes" type="number" min="1" step="1" value="10"
+          required>
+      </div>
+      <button class="btn btn-primary" type="submit">Add service</button>
+    </form>
+  </div>
+</section>
+
+<h2 class="h4 mb-3">Existing services</h2>
+{% for service in services %}
+<section class="card mb-3">
+  <div class="card-body">
+    <div class="d-flex flex-wrap justify-content-between gap-2 mb-3">
+      <h3 class="h5 mb-0">{{ service.name }}</h3>
+      <span>{{ "Active" if service.is_active else "Inactive" }} ·
+        {{ service.avg_minutes }} min · {{ service.tickets|length }} tickets</span>
+    </div>
+
+    <form method="post" action="{{ url_for('service_edit', service_id=service.id) }}">
+      <div class="mb-3">
+        <label class="form-label" for="name-{{ service.id }}">Name</label>
+        <input class="form-control" id="name-{{ service.id }}" name="name" maxlength="80" value="{{ service.name }}"
+          required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="message-{{ service.id }}">Completion message</label>
+        <input class="form-control" id="message-{{ service.id }}" name="completed_message" maxlength="250"
+          value="{{ service.completed_message }}" required>
+      </div>
+      <div class="mb-3">
+        <label class="form-label" for="minutes-{{ service.id }}">Average minutes</label>
+        <input class="form-control" id="minutes-{{ service.id }}" name="avg_minutes" type="number" min="1" step="1"
+          value="{{ service.avg_minutes }}" required>
+      </div>
+      <div class="form-check mb-3">
+        <input class="form-check-input" id="active-{{ service.id }}" name="active" type="checkbox" {% if
+          service.is_active %}checked{% endif %}>
+        <label class="form-check-label" for="active-{{ service.id }}">Active</label>
+      </div>
+      <button class="btn btn-primary" type="submit">Save changes</button>
+    </form>
+
+    <form class="mt-2" method="post" action="{{ url_for('service_delete', service_id=service.id) }}"
+      data-confirm="Delete service {{ service.name }}? This cannot be undone.">
+      <button class="btn btn-outline-danger" type="submit">Delete service</button>
+    </form>
+  </div>
+</section>
+{% else %}
+<p>No services have been created.</p>
+{% endfor %}
+{% endblock %}

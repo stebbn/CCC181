@@ -4,7 +4,7 @@
   <h2>Tickets in the queue</h2>
   <ul class="tickets">
     {% for t in tickets %}
-      <li><a href="{{ url_for('ticket', ticket_id=t.number) }}">#{{ t.number }}</a> {{ t.name }}</li>
+      <li><a href="{{ url_for('ticket', ticket_id=t.id) }}">#{{ t.id }}</a> {{ t.driver.name }}</li>
     {% else %}
       <li>The queue is empty.</li>
     {% endfor %}
